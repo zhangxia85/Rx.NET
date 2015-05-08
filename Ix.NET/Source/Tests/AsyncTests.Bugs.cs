@@ -101,11 +101,11 @@ namespace Tests
         [TestMethod]
         public void CorrectDispose()
         {
-            var disposed = false;
+            var disposed = new TaskCompletionSource<bool>();
 
             var xs = new[] { 1, 2, 3 }.WithDispose(() =>
             {
-                disposed = true;
+                disposed.TrySetResult(true);
             }).ToAsyncEnumerable();
 
             var ys = xs.Select(x => x + 1);
@@ -113,7 +113,7 @@ namespace Tests
             var e = ys.GetEnumerator();
             e.Dispose();
 
-            Assert.IsTrue(disposed);
+            Assert.IsTrue(disposed.Task.Result);
 
             Assert.IsFalse(e.MoveNext().Result);
         }
@@ -121,30 +121,30 @@ namespace Tests
         [TestMethod]
         public void DisposesUponError()
         {
-            var disposed = false;
+            var disposed = new TaskCompletionSource<bool>();
 
             var xs = new[] { 1, 2, 3 }.WithDispose(() =>
             {
-                disposed = true;
+                disposed.SetResult(true);
             }).ToAsyncEnumerable();
 
             var ex = new Exception("Bang!");
             var ys = xs.Select(x => { if (x == 1) throw ex; return x; });
 
             var e = ys.GetEnumerator();
-            AssertThrows<Exception>(() => e.MoveNext());
+            AssertThrows<Exception>(() => e.MoveNext().Wait());
 
-            Assert.IsTrue(disposed);
+            Assert.IsTrue(disposed.Task.Result);
         }
 
         [TestMethod]
         public void CorrectCancel()
         {
-            var disposed = false;
+            var disposed = new TaskCompletionSource<bool>();
 
             var xs = new[] { 1, 2, 3 }.WithDispose(() =>
             {
-                disposed = true;
+                disposed.SetResult(true);
             }).ToAsyncEnumerable();
 
             var ys = xs.Select(x => x + 1).Where(x => true);
@@ -171,7 +171,7 @@ namespace Tests
                 // it. This design is chosen because cancelling a MoveNext call leaves
                 // the enumerator in an indeterminate state. Further interactions with
                 // it should be forbidden.
-                Assert.IsTrue(disposed);
+                Assert.IsTrue(disposed.Task.Result);
             }
 
             Assert.IsFalse(e.MoveNext().Result);
@@ -206,6 +206,18 @@ namespace Tests
         {
             evt.WaitOne();
             yield return 42;
+        }
+
+        [TestMethod]
+        public void TakeOneFromSelectMany()
+        {
+            var enumerable = AsyncEnumerable
+                .Return(0)
+                .SelectMany(_ => AsyncEnumerable.Return("Check"))
+                .Take(1)
+                .Do(_ => { });
+
+            Assert.AreEqual("Check", enumerable.First().Result);
         }
     }
 
