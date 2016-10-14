@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.ComponentModel;
 using System.Reactive.PlatformServices;
@@ -10,22 +12,16 @@ namespace System.Reactive.Concurrency
     /// </summary>
     internal static class ConcurrencyAbstractionLayer
     {
-        private static Lazy<IConcurrencyAbstractionLayer> s_current = new Lazy<IConcurrencyAbstractionLayer>(Initialize);
-
         /// <summary>
         /// Gets the current CAL. If no CAL has been set yet, it will be initialized to the default.
         /// </summary>
-        public static IConcurrencyAbstractionLayer Current
-        {
-            get
-            {
-                return s_current.Value;
-            }
-        }
+        public static IConcurrencyAbstractionLayer Current { get; } = Initialize();
 
         private static IConcurrencyAbstractionLayer Initialize()
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             return PlatformEnlightenmentProvider.Current.GetService<IConcurrencyAbstractionLayer>() ?? new DefaultConcurrencyAbstractionLayer();
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 

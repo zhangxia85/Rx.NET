@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
 using System.Reactive;
@@ -6,17 +8,17 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using System.Collections.Generic;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public partial class ObservableExtensionsTest : ReactiveTest
     {
         #region Subscribe
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_ArgumentChecking()
         {
             var someObservable = Observable.Empty<int>();
@@ -40,13 +42,13 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => ObservableExtensions.Subscribe<int>(someObservable, _ => { }, (Exception _) => { }, default(Action)));
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_None_Return()
         {
             Observable.Return(1, Scheduler.Immediate).Subscribe();
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_None_Throw()
         {
             var ex = new Exception();
@@ -56,62 +58,62 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws(ex, () => xs.Subscribe());
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_None_Empty()
         {
-            Observable.Empty<int>(Scheduler.Immediate).Subscribe((int _) => { Assert.Fail(); });
+            Observable.Empty<int>(Scheduler.Immediate).Subscribe((int _) => { Assert.True(false); });
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_OnNext_Return()
         {
             int _x = -1;
             Observable.Return(42, Scheduler.Immediate).Subscribe((int x) => { _x = x; });
-            Assert.AreEqual(42, _x);
+            Assert.Equal(42, _x);
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_OnNext_Throw()
         {
             var ex = new Exception();
 
             var xs = Observable.Throw<int>(ex, Scheduler.Immediate);
 
-            ReactiveAssert.Throws(ex, () => xs.Subscribe(_ => { Assert.Fail(); }));
+            ReactiveAssert.Throws(ex, () => xs.Subscribe(_ => { Assert.True(false); }));
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_OnNext_Empty()
         {
-            Observable.Empty<int>(Scheduler.Immediate).Subscribe((int _) => { Assert.Fail(); });
+            Observable.Empty<int>(Scheduler.Immediate).Subscribe((int _) => { Assert.True(false); });
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_OnNextOnCompleted_Return()
         {
             bool finished = false;
             int _x = -1;
             Observable.Return(42, Scheduler.Immediate).Subscribe((int x) => { _x = x; }, () => { finished = true; });
-            Assert.AreEqual(42, _x);
-            Assert.IsTrue(finished);
+            Assert.Equal(42, _x);
+            Assert.True(finished);
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_OnNextOnCompleted_Throw()
         {
             var ex = new Exception();
 
             var xs = Observable.Throw<int>(ex, Scheduler.Immediate);
 
-            ReactiveAssert.Throws(ex, () => xs.Subscribe(_ => { Assert.Fail(); }, () => { Assert.Fail(); }));
+            ReactiveAssert.Throws(ex, () => xs.Subscribe(_ => { Assert.True(false); }, () => { Assert.True(false); }));
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_OnNextOnCompleted_Empty()
         {
             bool finished = false;
-            Observable.Empty<int>(Scheduler.Immediate).Subscribe((int _) => { Assert.Fail(); }, () => { finished = true; });
-            Assert.IsTrue(finished);
+            Observable.Empty<int>(Scheduler.Immediate).Subscribe((int _) => { Assert.True(false); }, () => { finished = true; });
+            Assert.True(finished);
         }
 
         #endregion
@@ -120,7 +122,7 @@ namespace ReactiveTests.Tests
 
 #if !NO_TPL
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_ArgumentChecking()
         {
             var someObservable = Observable.Empty<int>();
@@ -149,7 +151,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => ObservableExtensions.Subscribe<int>(someObservable, _ => { }, (Exception _) => { }, default(Action), ct));
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_None()
         {
             var scheduler = new TestScheduler();
@@ -179,7 +181,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_CancelBeforeBegin()
         {
             var scheduler = new TestScheduler();
@@ -207,7 +209,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_CancelMiddle()
         {
             var scheduler = new TestScheduler();
@@ -238,7 +240,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_CancelAfterEnd()
         {
             var scheduler = new TestScheduler();
@@ -273,7 +275,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_NeverCancel()
         {
             var scheduler = new TestScheduler();
@@ -305,12 +307,12 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_Overloads_AlreadyCancelled()
         {
             var xs = Observable.Defer<int>(() =>
             {
-                Assert.Fail();
+                Assert.True(false);
                 return Observable.Return(42, Scheduler.Immediate);
             });
 
@@ -325,7 +327,7 @@ namespace ReactiveTests.Tests
             xs.Subscribe(Observer.Create<int>(_ => { }, ex => { }, () => { }), cts.Token);
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_Overloads_None()
         {
             var i = 0;
@@ -346,13 +348,13 @@ namespace ReactiveTests.Tests
             xs.Subscribe(_ => { n++; }, ex => { e++; }, () => { c++; }, CancellationToken.None);
             xs.Subscribe(Observer.Create<int>(_ => { n++; }, ex => { e++; }, () => { c++; }), CancellationToken.None);
 
-            Assert.AreEqual(6, i);
-            Assert.AreEqual(5, n);
-            Assert.AreEqual(0, e);
-            Assert.AreEqual(3, c);
+            Assert.Equal(6, i);
+            Assert.Equal(5, n);
+            Assert.Equal(0, e);
+            Assert.Equal(3, c);
         }
 
-        [TestMethod]
+        [Fact]
         public void Subscribe_CT_CancelDuringCallback()
         {
             var scheduler = new TestScheduler();
@@ -378,7 +380,7 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(2, n);
+            Assert.Equal(2, n);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(200, 220)

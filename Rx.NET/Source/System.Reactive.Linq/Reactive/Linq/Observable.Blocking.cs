@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Collections.Generic;
 
@@ -18,7 +20,7 @@ namespace System.Reactive.Linq
         public static IEnumerable<IList<TSource>> Chunkify<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.Chunkify<TSource>(source);
         }
@@ -40,11 +42,11 @@ namespace System.Reactive.Linq
         public static IEnumerable<TResult> Collect<TSource, TResult>(this IObservable<TSource> source, Func<TResult> newCollector, Func<TResult, TSource, TResult> merge)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (newCollector == null)
-                throw new ArgumentNullException("newCollector");
+                throw new ArgumentNullException(nameof(newCollector));
             if (merge == null)
-                throw new ArgumentNullException("merge");
+                throw new ArgumentNullException(nameof(merge));
 
             return s_impl.Collect<TSource, TResult>(source, newCollector, merge);
         }
@@ -63,13 +65,13 @@ namespace System.Reactive.Linq
         public static IEnumerable<TResult> Collect<TSource, TResult>(this IObservable<TSource> source, Func<TResult> getInitialCollector, Func<TResult, TSource, TResult> merge, Func<TResult, TResult> getNewCollector)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (getInitialCollector == null)
-                throw new ArgumentNullException("getInitialCollector");
+                throw new ArgumentNullException(nameof(getInitialCollector));
             if (merge == null)
-                throw new ArgumentNullException("merge");
+                throw new ArgumentNullException(nameof(merge));
             if (getNewCollector == null)
-                throw new ArgumentNullException("getNewCollector");
+                throw new ArgumentNullException(nameof(getNewCollector));
 
             return s_impl.Collect<TSource, TResult>(source, getInitialCollector, merge, getNewCollector);
         }
@@ -93,7 +95,7 @@ namespace System.Reactive.Linq
         public static TSource First<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.First<TSource>(source);
         }
@@ -114,9 +116,9 @@ namespace System.Reactive.Linq
         public static TSource First<TSource>(this IObservable<TSource> source, Func<TSource, bool> predicate)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (predicate == null)
-                throw new ArgumentNullException("predicate");
+                throw new ArgumentNullException(nameof(predicate));
 
             return s_impl.First<TSource>(source, predicate);
         }
@@ -139,7 +141,7 @@ namespace System.Reactive.Linq
         public static TSource FirstOrDefault<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.FirstOrDefault<TSource>(source);
         }
@@ -159,9 +161,9 @@ namespace System.Reactive.Linq
         public static TSource FirstOrDefault<TSource>(this IObservable<TSource> source, Func<TSource, bool> predicate)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (predicate == null)
-                throw new ArgumentNullException("predicate");
+                throw new ArgumentNullException(nameof(predicate));
 
             return s_impl.FirstOrDefault<TSource>(source, predicate);
         }
@@ -184,9 +186,9 @@ namespace System.Reactive.Linq
         public static void ForEach<TSource>(this IObservable<TSource> source, Action<TSource> onNext)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (onNext == null)
-                throw new ArgumentNullException("onNext");
+                throw new ArgumentNullException(nameof(onNext));
 
             s_impl.ForEach<TSource>(source, onNext);
         }
@@ -205,9 +207,9 @@ namespace System.Reactive.Linq
         public static void ForEach<TSource>(this IObservable<TSource> source, Action<TSource, int> onNext)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (onNext == null)
-                throw new ArgumentNullException("onNext");
+                throw new ArgumentNullException(nameof(onNext));
 
             s_impl.ForEach<TSource>(source, onNext);
         }
@@ -226,7 +228,7 @@ namespace System.Reactive.Linq
         public static IEnumerator<TSource> GetEnumerator<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.GetEnumerator<TSource>(source);
         }
@@ -250,7 +252,7 @@ namespace System.Reactive.Linq
         public static TSource Last<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.Last<TSource>(source);
         }
@@ -271,9 +273,9 @@ namespace System.Reactive.Linq
         public static TSource Last<TSource>(this IObservable<TSource> source, Func<TSource, bool> predicate)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (predicate == null)
-                throw new ArgumentNullException("predicate");
+                throw new ArgumentNullException(nameof(predicate));
 
             return s_impl.Last<TSource>(source, predicate);
         }
@@ -296,7 +298,7 @@ namespace System.Reactive.Linq
         public static TSource LastOrDefault<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.LastOrDefault<TSource>(source);
         }
@@ -316,9 +318,9 @@ namespace System.Reactive.Linq
         public static TSource LastOrDefault<TSource>(this IObservable<TSource> source, Func<TSource, bool> predicate)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (predicate == null)
-                throw new ArgumentNullException("predicate");
+                throw new ArgumentNullException(nameof(predicate));
 
             return s_impl.LastOrDefault<TSource>(source, predicate);
         }
@@ -337,7 +339,7 @@ namespace System.Reactive.Linq
         public static IEnumerable<TSource> Latest<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.Latest<TSource>(source);
         }
@@ -358,7 +360,7 @@ namespace System.Reactive.Linq
         public static IEnumerable<TSource> MostRecent<TSource>(this IObservable<TSource> source, TSource initialValue)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.MostRecent<TSource>(source, initialValue);
         }
@@ -378,7 +380,7 @@ namespace System.Reactive.Linq
         public static IEnumerable<TSource> Next<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.Next<TSource>(source);
         }
@@ -402,7 +404,7 @@ namespace System.Reactive.Linq
         public static TSource Single<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.Single<TSource>(source);
         }
@@ -423,9 +425,9 @@ namespace System.Reactive.Linq
         public static TSource Single<TSource>(this IObservable<TSource> source, Func<TSource, bool> predicate)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (predicate == null)
-                throw new ArgumentNullException("predicate");
+                throw new ArgumentNullException(nameof(predicate));
 
             return s_impl.Single<TSource>(source, predicate);
         }
@@ -449,7 +451,7 @@ namespace System.Reactive.Linq
         public static TSource SingleOrDefault<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.SingleOrDefault<TSource>(source);
         }
@@ -470,9 +472,9 @@ namespace System.Reactive.Linq
         public static TSource SingleOrDefault<TSource>(this IObservable<TSource> source, Func<TSource, bool> predicate)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (predicate == null)
-                throw new ArgumentNullException("predicate");
+                throw new ArgumentNullException(nameof(predicate));
 
             return s_impl.SingleOrDefault<TSource>(source, predicate);
         }
@@ -493,7 +495,7 @@ namespace System.Reactive.Linq
         public static TSource Wait<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.Wait<TSource>(source);
         }

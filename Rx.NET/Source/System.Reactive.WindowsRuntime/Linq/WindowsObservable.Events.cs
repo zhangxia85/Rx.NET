@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if HAS_WINRT
 using System.Threading;
@@ -24,9 +26,9 @@ namespace System.Reactive.Linq
         public static IObservable<EventPattern<TSender, TResult>> FromEventPattern<TSender, TResult>(Action<TypedEventHandler<TSender, TResult>> addHandler, Action<TypedEventHandler<TSender, TResult>> removeHandler)
         {
             if (addHandler == null)
-                throw new ArgumentNullException("addHandler");
+                throw new ArgumentNullException(nameof(addHandler));
             if (removeHandler == null)
-                throw new ArgumentNullException("removeHandler");
+                throw new ArgumentNullException(nameof(removeHandler));
 
             return Observable.Create<EventPattern<TSender, TResult>>(observer =>
             {
@@ -59,11 +61,11 @@ namespace System.Reactive.Linq
         public static IObservable<EventPattern<TSender, TResult>> FromEventPattern<TDelegate, TSender, TResult>(Func<TypedEventHandler<TSender, TResult>, TDelegate> conversion, Action<TDelegate> addHandler, Action<TDelegate> removeHandler)
         {
             if (conversion == null)
-                throw new ArgumentNullException("conversion");
+                throw new ArgumentNullException(nameof(conversion));
             if (addHandler == null)
-                throw new ArgumentNullException("addHandler");
+                throw new ArgumentNullException(nameof(addHandler));
             if (removeHandler == null)
-                throw new ArgumentNullException("removeHandler");
+                throw new ArgumentNullException(nameof(removeHandler));
 
             return Observable.Create<EventPattern<TSender, TResult>>(observer =>
             {
@@ -92,7 +94,7 @@ namespace System.Reactive.Linq
         public static IEventPatternSource<TSender, TEventArgs> ToEventPattern<TSender, TEventArgs>(this IObservable<EventPattern<TSender, TEventArgs>> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return new EventPatternSource<TSender, TEventArgs>(source, (h, evt) => h(evt.Sender, evt.EventArgs));
         }

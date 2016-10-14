@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if !NO_SYNCCTX
 using System.Reactive.Concurrency;
@@ -23,9 +25,9 @@ namespace System.Reactive.Disposables
         public ContextDisposable(SynchronizationContext context, IDisposable disposable)
         {
             if (context == null)
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             if (disposable == null)
-                throw new ArgumentNullException("disposable");
+                throw new ArgumentNullException(nameof(disposable));
 
             _context = context;
             _disposable = disposable;

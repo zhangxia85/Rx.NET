@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Collections.Generic;
 using System.Globalization;
@@ -31,7 +33,7 @@ namespace System.Reactive.Concurrency
         protected VirtualTimeSchedulerBase(TAbsolute initialClock, IComparer<TAbsolute> comparer)
         {
             if (comparer == null)
-                throw new ArgumentNullException("comparer");
+                throw new ArgumentNullException(nameof(comparer));
 
             Clock = initialClock;
             Comparer = comparer;
@@ -98,7 +100,7 @@ namespace System.Reactive.Concurrency
         public IDisposable ScheduleRelative<TState>(TState state, TRelative dueTime, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var runAt = Add(Clock, dueTime);
 
@@ -116,7 +118,7 @@ namespace System.Reactive.Concurrency
         public IDisposable Schedule<TState>(TState state, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             return ScheduleAbsolute(state, Clock, action);
         }
@@ -133,7 +135,7 @@ namespace System.Reactive.Concurrency
         public IDisposable Schedule<TState>(TState state, TimeSpan dueTime, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             return ScheduleRelative(state, ToRelative(dueTime), action);
         }
@@ -150,7 +152,7 @@ namespace System.Reactive.Concurrency
         public IDisposable Schedule<TState>(TState state, DateTimeOffset dueTime, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             return ScheduleRelative(state, ToRelative(dueTime - Now), action);
         }
@@ -196,7 +198,7 @@ namespace System.Reactive.Concurrency
         {
             var dueToClock = Comparer.Compare(time, Clock);
             if (dueToClock < 0)
-                throw new ArgumentOutOfRangeException("time");
+                throw new ArgumentOutOfRangeException(nameof(time));
 
             if (dueToClock == 0)
                 return;
@@ -237,7 +239,7 @@ namespace System.Reactive.Concurrency
 
             var dueToClock = Comparer.Compare(dt, Clock);
             if (dueToClock < 0)
-                throw new ArgumentOutOfRangeException("time");
+                throw new ArgumentOutOfRangeException(nameof(time));
 
             if (dueToClock == 0)
                 return;
@@ -263,7 +265,7 @@ namespace System.Reactive.Concurrency
 
             var dueToClock = Comparer.Compare(dt, Clock);
             if (dueToClock < 0)
-                throw new ArgumentOutOfRangeException("time");
+                throw new ArgumentOutOfRangeException(nameof(time));
 
             Clock = dt;
         }
@@ -400,7 +402,7 @@ namespace System.Reactive.Concurrency
         public override IDisposable ScheduleAbsolute<TState>(TState state, TAbsolute dueTime, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var si = default(ScheduledItem<TAbsolute, TState>);
 

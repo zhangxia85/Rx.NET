@@ -1,10 +1,12 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if !NO_STOPWATCH
 using System;
 using System.Reactive.Concurrency;
 using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace ReactiveTests.Tests
 {
@@ -28,13 +30,13 @@ namespace ReactiveTests.Tests
             //    Thread.Sleep(d);
             //    var e2 = sw.Elapsed;
 
-            //    Assert.IsTrue(e2.Ticks > e1.Ticks);
+            //    Assert.True(e2.Ticks > e1.Ticks);
             //    t += (e2 - e1).Ticks;
 
             //    sw.Dispose();
             //}
 
-            //Assert.IsTrue(TimeSpan.FromTicks(t / N).TotalMilliseconds < d * 10 /* 10x margin */);
+            //Assert.True(TimeSpan.FromTicks(t / N).TotalMilliseconds < d * 10 /* 10x margin */);
         }
     }
 }

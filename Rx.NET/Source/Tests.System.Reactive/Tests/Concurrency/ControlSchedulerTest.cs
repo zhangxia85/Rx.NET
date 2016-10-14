@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if HAS_WINFORMS
 
@@ -8,35 +10,35 @@ using System.Reactive.Disposables;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Microsoft.Reactive.Testing;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public class ControlSchedulerTest
     {
-        [TestMethod]
+        [Fact]
         public void Ctor_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new ControlScheduler(null));
         }
 
-        [TestMethod]
+        [Fact]
         public void Control()
         {
             var lbl = new Label();
-            Assert.AreSame(lbl, new ControlScheduler(lbl).Control);
+            Assert.Same(lbl, new ControlScheduler(lbl).Control);
         }
 
-        [TestMethod]
+        [Fact]
         public void Now()
         {
             var res = new ControlScheduler(new Label()).Now - DateTime.Now;
-            Assert.IsTrue(res.Seconds < 1);
+            Assert.True(res.Seconds < 1);
         }
 
-        [TestMethod]
+        [Fact]
         public void Schedule_ArgumentChecking()
         {
             var s = new ControlScheduler(new Label());
@@ -45,7 +47,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => s.Schedule(42, DateTimeOffset.Now, default(Func<IScheduler, int, IDisposable>)));
         }
 
-        [TestMethod]
+        [Fact]
         public void Schedule()
         {
             var evt = new ManualResetEvent(false);
@@ -55,14 +57,14 @@ namespace ReactiveTests.Tests
             var lbl = CreateLabel();
             var sch = new ControlScheduler(lbl);
             
-            sch.Schedule(() => { lbl.Text = "Okay"; Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId); });
-            sch.Schedule(() => { Assert.AreEqual("Okay", lbl.Text); Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId); evt.Set(); });
+            sch.Schedule(() => { lbl.Text = "Okay"; Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId); });
+            sch.Schedule(() => { Assert.Equal("Okay", lbl.Text); Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId); evt.Set(); });
 
             evt.WaitOne();
             Application.Exit();
         }
 
-        [TestMethod]
+        [Fact]
         public void ScheduleError()
         {
             var evt = new ManualResetEvent(false);
@@ -70,7 +72,7 @@ namespace ReactiveTests.Tests
             var ex = new Exception();
 
             var lbl = CreateLabelWithHandler(e => {
-                Assert.AreSame(ex, e);
+                Assert.Same(ex, e);
                 evt.Set();
             });
 
@@ -81,13 +83,13 @@ namespace ReactiveTests.Tests
             Application.Exit();
         }
 
-        [TestMethod]
+        [Fact]
         public void ScheduleRelative()
         {
             ScheduleRelative_(TimeSpan.FromSeconds(0.1));
         }
 
-        [TestMethod]
+        [Fact]
         public void ScheduleRelative_Zero()
         {
             ScheduleRelative_(TimeSpan.Zero);
@@ -105,12 +107,12 @@ namespace ReactiveTests.Tests
             sch.Schedule(delay, () =>
             {
                 lbl.Text = "Okay";
-                Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                 
                 sch.Schedule(() =>
                 {
-                    Assert.AreEqual("Okay", lbl.Text);
-                    Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                    Assert.Equal("Okay", lbl.Text);
+                    Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                     evt.Set();
                 });
             });
@@ -119,7 +121,7 @@ namespace ReactiveTests.Tests
             Application.Exit();
         }
 
-        [TestMethod]
+        [Fact]
         public void ScheduleRelative_Nested()
         {
             var evt = new ManualResetEvent(false);
@@ -134,12 +136,12 @@ namespace ReactiveTests.Tests
                 sch.Schedule(TimeSpan.FromSeconds(0.1), () =>
                 {
                     lbl.Text = "Okay";
-                    Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                    Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
 
                     sch.Schedule(() =>
                     {
-                        Assert.AreEqual("Okay", lbl.Text);
-                        Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                        Assert.Equal("Okay", lbl.Text);
+                        Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                         evt.Set();
                     });
                 });
@@ -149,7 +151,7 @@ namespace ReactiveTests.Tests
             Application.Exit();
         }
 
-        [TestMethod]
+        [Fact]
         public void ScheduleRelative_Cancel()
         {
             var evt = new ManualResetEvent(false);
@@ -162,7 +164,7 @@ namespace ReactiveTests.Tests
             sch.Schedule(TimeSpan.FromSeconds(0.1), () =>
             {
                 lbl.Text = "Okay";
-                Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
 
                 var d = sch.Schedule(TimeSpan.FromSeconds(0.1), () =>
                 {
@@ -176,8 +178,8 @@ namespace ReactiveTests.Tests
 
                 sch.Schedule(TimeSpan.FromSeconds(0.2), () =>
                 {
-                    Assert.AreEqual("Okay", lbl.Text);
-                    Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                    Assert.Equal("Okay", lbl.Text);
+                    Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                     evt.Set();
                 });
             });
@@ -186,7 +188,7 @@ namespace ReactiveTests.Tests
             Application.Exit();
         }
 
-        [TestMethod]
+        [Fact]
         public void SchedulePeriodic_ArgumentChecking()
         {
             var s = new ControlScheduler(new Label());
@@ -195,7 +197,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentOutOfRangeException>(() => s.SchedulePeriodic(42, TimeSpan.FromMilliseconds(1).Subtract(TimeSpan.FromTicks(1)), x => x));
         }
 
-        [TestMethod]
+        [Fact]
         public void SchedulePeriodic()
         {
             var evt = new ManualResetEvent(false);
@@ -210,7 +212,7 @@ namespace ReactiveTests.Tests
             d.Disposable = sch.SchedulePeriodic(1, TimeSpan.FromSeconds(0.1), n =>
             {
                 lbl.Text = "Okay " + n;
-                Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
 
                 if (n == 3)
                 {
@@ -218,15 +220,15 @@ namespace ReactiveTests.Tests
 
                     sch.Schedule(TimeSpan.FromSeconds(0.2), () =>
                     {
-                        Assert.AreEqual("Okay 3", lbl.Text);
-                        Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                        Assert.Equal("Okay 3", lbl.Text);
+                        Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                         evt.Set();
                     });
                 }
 
                 if (n > 3)
                 {
-                    Assert.Fail();
+                    Assert.True(false);
                 }
 
                 return n + 1;
@@ -236,7 +238,7 @@ namespace ReactiveTests.Tests
             Application.Exit();
         }
 
-        [TestMethod]
+        [Fact]
         public void SchedulePeriodic_Nested()
         {
             var evt = new ManualResetEvent(false);
@@ -255,7 +257,7 @@ namespace ReactiveTests.Tests
                 d.Disposable = sch.SchedulePeriodic(1, TimeSpan.FromSeconds(0.1), n =>
                 {
                     lbl.Text = "Okay " + n;
-                    Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                    Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
 
                     if (n == 3)
                     {
@@ -263,8 +265,8 @@ namespace ReactiveTests.Tests
 
                         sch.Schedule(TimeSpan.FromSeconds(0.2), () =>
                         {
-                            Assert.AreEqual("Okay 3", lbl.Text);
-                            Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                            Assert.Equal("Okay 3", lbl.Text);
+                            Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                             evt.Set();
                         });
                     }

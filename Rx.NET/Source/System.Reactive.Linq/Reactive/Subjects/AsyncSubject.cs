@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Reactive.Disposables;
 using System.Threading;
@@ -12,11 +14,13 @@ namespace System.Reactive.Subjects
     /// The last value before the OnCompleted notification, or the error received through OnError, is sent to all subscribed observers.
     /// </summary>
     /// <typeparam name="T">The type of the elements processed by the subject.</typeparam>
-    public sealed class AsyncSubject<T> : ISubject<T>, IDisposable
+    public sealed class AsyncSubject<T> : SubjectBase<T>, IDisposable
 #if HAS_AWAIT
         , INotifyCompletion
 #endif
     {
+        #region Fields
+
         private readonly object _gate = new object();
 
         private ImmutableList<IObserver<T>> _observers;
@@ -26,6 +30,10 @@ namespace System.Reactive.Subjects
         private bool _hasValue;
         private Exception _exception;
 
+        #endregion
+
+        #region Constructors
+
         /// <summary>
         /// Creates a subject that can only receive one value and that value is cached for all future observations.
         /// </summary>
@@ -34,10 +42,14 @@ namespace System.Reactive.Subjects
             _observers = ImmutableList<IObserver<T>>.Empty;
         }
 
+        #endregion
+
+        #region Properties
+
         /// <summary>
         /// Indicates whether the subject has observers subscribed to it.
         /// </summary>
-        public bool HasObservers
+        public override bool HasObservers
         {
             get
             {
@@ -47,9 +59,29 @@ namespace System.Reactive.Subjects
         }
 
         /// <summary>
+        /// Indicates whether the subject has been disposed.
+        /// </summary>
+        public override bool IsDisposed
+        {
+            get
+            {
+                lock (_gate)
+                {
+                    return _isDisposed;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        #region IObserver<T> implementation
+
+        /// <summary>
         /// Notifies all subscribed observers about the end of the sequence, also causing the last received value to be sent out (if any).
         /// </summary>
-        public void OnCompleted()
+        public override void OnCompleted()
         {
             var os = default(IObserver<T>[]);
 
@@ -90,10 +122,10 @@ namespace System.Reactive.Subjects
         /// </summary>
         /// <param name="error">The exception to send to all observers.</param>
         /// <exception cref="ArgumentNullException"><paramref name="error"/> is null.</exception>
-        public void OnError(Exception error)
+        public override void OnError(Exception error)
         {
             if (error == null)
-                throw new ArgumentNullException("error");
+                throw new ArgumentNullException(nameof(error));
 
             var os = default(IObserver<T>[]);
             lock (_gate)
@@ -118,7 +150,7 @@ namespace System.Reactive.Subjects
         /// Sends a value to the subject. The last value received before successful termination will be sent to all subscribed and future observers.
         /// </summary>
         /// <param name="value">The value to store in the subject.</param>
-        public void OnNext(T value)
+        public override void OnNext(T value)
         {
             lock (_gate)
             {
@@ -132,16 +164,20 @@ namespace System.Reactive.Subjects
             }
         }
 
+        #endregion
+
+        #region IObservable<T> implementation
+
         /// <summary>
         /// Subscribes an observer to the subject.
         /// </summary>
         /// <param name="observer">Observer to subscribe to the subject.</param>
         /// <returns>Disposable object that can be used to unsubscribe the observer from the subject.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="observer"/> is null.</exception>
-        public IDisposable Subscribe(IObserver<T> observer)
+        public override IDisposable Subscribe(IObserver<T> observer)
         {
             if (observer == null)
-                throw new ArgumentNullException("observer");
+                throw new ArgumentNullException(nameof(observer));
 
             var ex = default(Exception);
             var v = default(T);
@@ -163,14 +199,18 @@ namespace System.Reactive.Subjects
             }
 
             if (ex != null)
+            {
                 observer.OnError(ex);
+            }
             else if (hv)
             {
                 observer.OnNext(v);
                 observer.OnCompleted();
             }
             else
+            {
                 observer.OnCompleted();
+            }
 
             return Disposable.Empty;
         }
@@ -202,6 +242,10 @@ namespace System.Reactive.Subjects
             }
         }
 
+        #endregion
+
+        #region IDisposable implementation
+
         void CheckDisposed()
         {
             if (_isDisposed)
@@ -211,7 +255,7 @@ namespace System.Reactive.Subjects
         /// <summary>
         /// Unsubscribe all observers and release resources.
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             lock (_gate)
             {
@@ -221,6 +265,10 @@ namespace System.Reactive.Subjects
                 _value = default(T);
             }
         }
+
+        #endregion
+
+        #region Await support
 
 #if HAS_AWAIT
         /// <summary>
@@ -240,7 +288,7 @@ namespace System.Reactive.Subjects
         public void OnCompleted(Action continuation)
         {
             if (continuation == null)
-                throw new ArgumentNullException("continuation");
+                throw new ArgumentNullException(nameof(continuation));
 
             OnCompleted(continuation, true);
         }
@@ -342,5 +390,9 @@ namespace System.Reactive.Subjects
 
             return _value;
         }
+
+        #endregion
+
+        #endregion
     }
 }

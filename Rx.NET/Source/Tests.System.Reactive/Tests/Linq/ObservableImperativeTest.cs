@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using ReactiveTests.Dummies;
 
 #if !NO_TPL
@@ -17,13 +19,13 @@ using System.Threading.Tasks;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public partial class ObservableImperativeTest : ReactiveTest
     {
         #region ForEachAsync
 
 #if !NO_TPL
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.ForEachAsync(default(IObservable<int>), x => { }));
@@ -37,7 +39,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.ForEachAsync(Observable.Never<int>(), default(Action<int, int>), CancellationToken.None));
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_Never()
         {
             var scheduler = new TestScheduler();
@@ -69,10 +71,10 @@ namespace ReactiveTests.Tests
                 new Recorded<int>(500, 5)
             );
 
-            Assert.AreEqual(TaskStatus.WaitingForActivation, task.Status);
+            Assert.Equal(TaskStatus.WaitingForActivation, task.Status);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_Completed()
         {
             var scheduler = new TestScheduler();
@@ -105,10 +107,10 @@ namespace ReactiveTests.Tests
                 new Recorded<int>(500, 5)
             );
 
-            Assert.AreEqual(TaskStatus.RanToCompletion, task.Status);
+            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_Error()
         {
             var scheduler = new TestScheduler();
@@ -143,11 +145,11 @@ namespace ReactiveTests.Tests
                 new Recorded<int>(500, 5)
             );
 
-            Assert.AreEqual(TaskStatus.Faulted, task.Status);
-            Assert.AreSame(exception, task.Exception.InnerException);
+            Assert.Equal(TaskStatus.Faulted, task.Status);
+            Assert.Same(exception, task.Exception.InnerException);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_Throw()
         {
             var scheduler = new TestScheduler();
@@ -186,11 +188,11 @@ namespace ReactiveTests.Tests
                 new Recorded<int>(400, 4)
             );
 
-            Assert.AreEqual(TaskStatus.Faulted, task.Status);
-            Assert.AreSame(exception, task.Exception.InnerException);
+            Assert.Equal(TaskStatus.Faulted, task.Status);
+            Assert.Same(exception, task.Exception.InnerException);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_CancelDuring()
         {
             var scheduler = new TestScheduler();
@@ -222,10 +224,10 @@ namespace ReactiveTests.Tests
                 new Recorded<int>(300, 3)
             );
 
-            Assert.AreEqual(TaskStatus.Canceled, task.Status);
+            Assert.Equal(TaskStatus.Canceled, task.Status);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_CancelBefore()
         {
             var scheduler = new TestScheduler();
@@ -255,10 +257,10 @@ namespace ReactiveTests.Tests
             list.AssertEqual(
             );
 
-            Assert.AreEqual(TaskStatus.Canceled, task.Status);
+            Assert.Equal(TaskStatus.Canceled, task.Status);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_CancelAfter()
         {
             var scheduler = new TestScheduler();
@@ -292,10 +294,10 @@ namespace ReactiveTests.Tests
                 new Recorded<int>(500, 5)
             );
 
-            Assert.AreEqual(TaskStatus.RanToCompletion, task.Status);
+            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_Default()
         {
             var list = new List<int>();
@@ -303,7 +305,7 @@ namespace ReactiveTests.Tests
             list.AssertEqual(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_Index()
         {
             var list = new List<int>();
@@ -311,7 +313,7 @@ namespace ReactiveTests.Tests
             list.AssertEqual(3 * 0, 4 * 1, 5 * 2, 6 * 3, 7 * 4);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_Default_Cancel()
         {
             var N = 10;
@@ -353,14 +355,14 @@ namespace ReactiveTests.Tests
                     ;
 
                 for (int i = 0; i < 10; i++)
-                    Assert.AreEqual(42, lst[i]);
+                    Assert.Equal(42, lst[i]);
 
-                Assert.IsTrue(done);
-                Assert.IsTrue(t.IsCanceled);
+                Assert.True(done);
+                Assert.True(t.IsCanceled);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_Index_Cancel()
         {
             var N = 10;
@@ -402,14 +404,14 @@ namespace ReactiveTests.Tests
                     ;
 
                 for (int i = 0; i < 10; i++)
-                    Assert.AreEqual(i * 42, lst[i]);
+                    Assert.Equal(i * 42, lst[i]);
 
-                Assert.IsTrue(done);
-                Assert.IsTrue(t.IsCanceled);
+                Assert.True(done);
+                Assert.True(t.IsCanceled);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_DisposeThrows1()
         {
             var cts = new CancellationTokenSource();
@@ -443,11 +445,11 @@ namespace ReactiveTests.Tests
             }
             catch
             {
-                Assert.Fail();
+                Assert.True(false);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_DisposeThrows2()
         {
             var cts = new CancellationTokenSource();
@@ -484,12 +486,14 @@ namespace ReactiveTests.Tests
             }
             catch (AggregateException err)
             {
-                Assert.AreEqual(1, err.InnerExceptions.Count);
-                Assert.AreSame(ex, err.InnerExceptions[0]);
+                Assert.Equal(1, err.InnerExceptions.Count);
+                Assert.Same(ex, err.InnerExceptions[0]);
             }
         }
 
-        [TestMethod]
+#if !NO_THREAD
+        [Fact]
+        [Trait("SkipCI", "true")]
         public void ForEachAsync_DisposeThrows()
         {
             //
@@ -513,11 +517,11 @@ namespace ReactiveTests.Tests
 
             var s = Scheduler.Default.Catch<Exception>(err =>
             {
-                Thread.VolatileWrite(ref hasCaughtEscapingException, 1);
+                Volatile.Write(ref hasCaughtEscapingException, 1);
                 return ex == err;
             });
 
-            while (Thread.VolatileRead(ref hasCaughtEscapingException) == 0)
+            while (Volatile.Read(ref hasCaughtEscapingException) == 0)
             {
                 var xs = Observable.Create<int>(observer =>
                 {
@@ -536,13 +540,14 @@ namespace ReactiveTests.Tests
                 }
                 catch (AggregateException err)
                 {
-                    Assert.AreEqual(1, err.InnerExceptions.Count);
-                    Assert.AreSame(ex, err.InnerExceptions[0]);
+                    Assert.Equal(1, err.InnerExceptions.Count);
+                    Assert.Same(ex, err.InnerExceptions[0]);
                 }
             }
         }
+#endif
 
-        [TestMethod]
+        [Fact]
         public void ForEachAsync_SubscribeThrows()
         {
             var ex = new Exception();
@@ -560,21 +565,21 @@ namespace ReactiveTests.Tests
             try
             {
                 t.Wait();
-                Assert.Fail();
+                Assert.True(false);
             }
             catch (AggregateException err)
             {
-                Assert.AreEqual(1, err.InnerExceptions.Count);
-                Assert.AreSame(ex, err.InnerExceptions[0]);
+                Assert.Equal(1, err.InnerExceptions.Count);
+                Assert.Same(ex, err.InnerExceptions[0]);
             }
         }
 #endif
 
-        #endregion
+#endregion
 
         #region + Case +
 
-        [TestMethod]
+        [Fact]
         public void Case_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.Case(null, new Dictionary<int, IObservable<int>>(), DummyObservable<int>.Instance));
@@ -589,7 +594,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.Case<int, int>(DummyFunc<int>.Instance, null));
         }
 
-        [TestMethod]
+        [Fact]
         public void Case_One()
         {
             var scheduler = new TestScheduler();
@@ -641,7 +646,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Case_Two()
         {
             var scheduler = new TestScheduler();
@@ -693,7 +698,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Case_Three()
         {
             var scheduler = new TestScheduler();
@@ -745,7 +750,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Case_Throw()
         {
             var scheduler = new TestScheduler();
@@ -795,7 +800,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void CaseWithDefault_One()
         {
             var scheduler = new TestScheduler();
@@ -837,7 +842,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void CaseWithDefault_Two()
         {
             var scheduler = new TestScheduler();
@@ -879,7 +884,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void CaseWithDefault_Three()
         {
             var scheduler = new TestScheduler();
@@ -917,7 +922,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void CaseWithDefault_Throw()
         {
             var scheduler = new TestScheduler();
@@ -957,14 +962,14 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void CaseWithDefault_CheckDefault()
         {
             Observable.Case(() => 1, new Dictionary<int, IObservable<int>>(), DefaultScheduler.Instance)
                 .AssertEqual(Observable.Case(() => 1, new Dictionary<int, IObservable<int>>()));
         }
 
-        [TestMethod]
+        [Fact]
         public void Case_Error()
         {
             var scheduler = new TestScheduler();
@@ -1012,14 +1017,14 @@ namespace ReactiveTests.Tests
 
         #region + DoWhile +
 
-        [TestMethod]
+        [Fact]
         public void DoWhile_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.DoWhile(DummyObservable<int>.Instance, null));
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.DoWhile(default(IObservable<int>), DummyFunc<bool>.Instance));
         }
 
-        [TestMethod]
+        [Fact]
         public void DoWhile_AlwaysFalse()
         {
             var scheduler = new TestScheduler();
@@ -1047,7 +1052,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void DoWhile_AlwaysTrue()
         {
             var scheduler = new TestScheduler();
@@ -1085,7 +1090,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void DoWhile_AlwaysTrue_Throw()
         {
             var scheduler = new TestScheduler();
@@ -1107,7 +1112,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void DoWhile_AlwaysTrue_Infinite()
         {
             var scheduler = new TestScheduler();
@@ -1127,7 +1132,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void DoWhile_SometimesTrue()
         {
             var scheduler = new TestScheduler();
@@ -1167,7 +1172,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void DoWhile_SometimesThrows()
         {
             var scheduler = new TestScheduler();
@@ -1213,14 +1218,14 @@ namespace ReactiveTests.Tests
 
         #region + For +
 
-        [TestMethod]
+        [Fact]
         public void For_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.For(DummyEnumerable<int>.Instance, default(Func<int, IObservable<int>>)));
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.For(null, DummyFunc<int, IObservable<int>>.Instance));
         }
 
-        [TestMethod]
+        [Fact]
         public void For_Basic()
         {
             var scheduler = new TestScheduler();
@@ -1253,7 +1258,7 @@ namespace ReactiveTests.Tests
             throw ex;
         }
 
-        [TestMethod]
+        [Fact]
         public void For_Error_Iterator()
         {
             var scheduler = new TestScheduler();
@@ -1280,7 +1285,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void For_Error_Source()
         {
             var scheduler = new TestScheduler();
@@ -1294,7 +1299,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void For_SelectorThrows()
         {
             var scheduler = new TestScheduler();
@@ -1312,7 +1317,7 @@ namespace ReactiveTests.Tests
 
         #region + If +
 
-        [TestMethod]
+        [Fact]
         public void If_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.If(null, DummyObservable<int>.Instance, DummyObservable<int>.Instance));
@@ -1323,7 +1328,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.If(DummyFunc<bool>.Instance, DummyObservable<int>.Instance, default(IScheduler)));
         }
 
-        [TestMethod]
+        [Fact]
         public void If_True()
         {
             var scheduler = new TestScheduler();
@@ -1356,7 +1361,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void If_False()
         {
             var scheduler = new TestScheduler();
@@ -1389,7 +1394,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void If_Throw()
         {
             var scheduler = new TestScheduler();
@@ -1421,7 +1426,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void If_Dispose()
         {
             var scheduler = new TestScheduler();
@@ -1452,14 +1457,14 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void If_Default_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.If<int>(null, DummyObservable<int>.Instance));
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.If<int>(DummyFunc<bool>.Instance, null));
         }
 
-        [TestMethod]
+        [Fact]
         public void If_Default_Completed()
         {
             var scheduler = new TestScheduler();
@@ -1488,7 +1493,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void If_Default_Error()
         {
             var scheduler = new TestScheduler();
@@ -1519,7 +1524,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void If_Default_Never()
         {
             var scheduler = new TestScheduler();
@@ -1546,7 +1551,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void If_Default_Other()
         {
             var scheduler = new TestScheduler();
@@ -1572,7 +1577,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void If_Default_Scheduler()
         {
             var scheduler = new TestScheduler();
@@ -1598,14 +1603,14 @@ namespace ReactiveTests.Tests
 
         #region + While +
 
-        [TestMethod]
+        [Fact]
         public void While_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.While(default(Func<bool>), DummyObservable<int>.Instance));
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.While(DummyFunc<bool>.Instance, default(IObservable<int>)));
         }
 
-        [TestMethod]
+        [Fact]
         public void While_AlwaysFalse()
         {
             var scheduler = new TestScheduler();
@@ -1628,7 +1633,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void While_AlwaysTrue()
         {
             var scheduler = new TestScheduler();
@@ -1666,7 +1671,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void While_AlwaysTrue_Throw()
         {
             var scheduler = new TestScheduler();
@@ -1688,7 +1693,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void While_AlwaysTrue_Infinite()
         {
             var scheduler = new TestScheduler();
@@ -1708,7 +1713,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void While_SometimesTrue()
         {
             var scheduler = new TestScheduler();
@@ -1748,7 +1753,7 @@ namespace ReactiveTests.Tests
             throw ex;
         }
 
-        [TestMethod]
+        [Fact]
         public void While_SometimesThrows()
         {
             var scheduler = new TestScheduler();
@@ -1788,8 +1793,8 @@ namespace ReactiveTests.Tests
         #endregion
 
         #region General tests for loops
-
-        [TestMethod]
+#if HAS_STACKTRACE
+        [Fact]
         public void LoopTest1()
         {
             var loop = Observable.Defer(() =>
@@ -1815,11 +1820,11 @@ namespace ReactiveTests.Tests
                 std.Add(new System.Diagnostics.StackTrace().FrameCount);
             });
 
-            Assert.IsTrue(res.SequenceEqual(new[] { 0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4 }));
-            Assert.IsTrue(std.Distinct().Count() == 1);
+            Assert.True(res.SequenceEqual(new[] { 0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4 }));
+            Assert.True(std.Distinct().Count() == 1);
         }
 
-        [TestMethod]
+        [Fact]
         public void LoopTest2()
         {
             var n = 0;
@@ -1841,10 +1846,10 @@ namespace ReactiveTests.Tests
                 std.Add(new System.Diagnostics.StackTrace().FrameCount);
             });
 
-            Assert.IsTrue(res.SequenceEqual(Enumerable.Repeat(42, 10)));
-            Assert.IsTrue(std.Distinct().Count() == 1);
+            Assert.True(res.SequenceEqual(Enumerable.Repeat(42, 10)));
+            Assert.True(std.Distinct().Count() == 1);
         }
-
-        #endregion
+#endif
+#endregion
     }
 }

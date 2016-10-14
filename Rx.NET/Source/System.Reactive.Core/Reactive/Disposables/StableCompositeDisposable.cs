@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Collections.Generic;
 using System.Threading;
@@ -19,9 +21,9 @@ namespace System.Reactive.Disposables
         public static ICancelable Create(IDisposable disposable1, IDisposable disposable2)
         {
             if (disposable1 == null)
-                throw new ArgumentNullException("disposable1");
+                throw new ArgumentNullException(nameof(disposable1));
             if (disposable2 == null)
-                throw new ArgumentNullException("disposable2");
+                throw new ArgumentNullException(nameof(disposable2));
 
             return new Binary(disposable1, disposable2);
         }
@@ -34,7 +36,7 @@ namespace System.Reactive.Disposables
         public static ICancelable Create(params IDisposable[] disposables)
         {
             if (disposables == null)
-                throw new ArgumentNullException("disposables");
+                throw new ArgumentNullException(nameof(disposables));
 
             return new NAry(disposables);
         }
@@ -47,7 +49,7 @@ namespace System.Reactive.Disposables
         public static ICancelable Create(IEnumerable<IDisposable> disposables)
         {
             if (disposables == null)
-                throw new ArgumentNullException("disposables");
+                throw new ArgumentNullException(nameof(disposables));
 
             return new NAry(disposables);
         }
@@ -86,13 +88,17 @@ namespace System.Reactive.Disposables
 
             public override void Dispose()
             {
+#pragma warning disable 0420
                 var old1 = Interlocked.Exchange(ref _disposable1, null);
+#pragma warning restore 0420
                 if (old1 != null)
                 {
                     old1.Dispose();
                 }
 
+#pragma warning disable 0420
                 var old2 = Interlocked.Exchange(ref _disposable2, null);
+#pragma warning restore 0420
                 if (old2 != null)
                 {
                     old2.Dispose();
@@ -117,7 +123,7 @@ namespace System.Reactive.Disposables
                 // Doing this on the list to avoid duplicate enumeration of disposables.
                 //
                 if (_disposables.Contains(null))
-                    throw new ArgumentException(Strings_Core.DISPOSABLES_CANT_CONTAIN_NULL, "disposables");
+                    throw new ArgumentException(Strings_Core.DISPOSABLES_CANT_CONTAIN_NULL, nameof(disposables));
             }
 
             public override bool IsDisposed
@@ -130,7 +136,9 @@ namespace System.Reactive.Disposables
 
             public override void Dispose()
             {
+#pragma warning disable 0420
                 var old = Interlocked.Exchange(ref _disposables, null);
+#pragma warning restore 0420
                 if (old != null)
                 {
                     foreach (var d in old)

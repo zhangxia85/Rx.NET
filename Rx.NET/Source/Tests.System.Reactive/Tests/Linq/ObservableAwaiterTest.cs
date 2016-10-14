@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if HAS_AWAIT
 
@@ -10,16 +12,16 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using ReactiveTests.Dummies;
 using System.Reactive.Disposables;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public class ObservableAwaiterTest : ReactiveTest
     {
-        [TestMethod]
+        [Fact]
         public void Await_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.GetAwaiter<int>(default(IObservable<int>)));
@@ -28,9 +30,11 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.GetAwaiter(Observable.Empty<int>()).OnCompleted(null));
         }
 
-        [TestMethod]
+        [Fact]
         public void Await()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var scheduler = new TestScheduler();
 
             var xs = scheduler.CreateHotObservable(
@@ -51,17 +55,19 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(410, t);
-            Assert.AreEqual(3, result);
+            Assert.Equal(410, t);
+            Assert.Equal(3, result);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(100)
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Await_Connectable()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var scheduler = new TestScheduler();
 
             var s = default(long);
@@ -87,14 +93,16 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(100, s);
-            Assert.AreEqual(260, t);
-            Assert.AreEqual(42, result);
+            Assert.Equal(100, s);
+            Assert.Equal(260, t);
+            Assert.Equal(42, result);
         }
 
-        [TestMethod]
+        [Fact]
         public void Await_Error()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var scheduler = new TestScheduler();
 
             var ex = new Exception();
@@ -116,16 +124,18 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(410, t);
+            Assert.Equal(410, t);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(100)
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Await_Never()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var scheduler = new TestScheduler();
 
             var xs = scheduler.CreateHotObservable(
@@ -145,17 +155,19 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(long.MaxValue, t);
-            Assert.IsFalse(hasValue);
+            Assert.Equal(long.MaxValue, t);
+            Assert.False(hasValue);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(100)
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Await_Empty()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var scheduler = new TestScheduler();
 
             var xs = scheduler.CreateHotObservable(
@@ -170,14 +182,14 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(300, t);
+            Assert.Equal(300, t);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(100)
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void RunAsync_ArgumentChecking()
         {
             var ct = CancellationToken.None;
@@ -186,9 +198,11 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => Observable.RunAsync<int>(default(IConnectableObservable<int>), ct));
         }
 
-        [TestMethod]
+        [Fact]
         public void RunAsync_Simple()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var scheduler = new TestScheduler();
 
             var xs = scheduler.CreateHotObservable(
@@ -205,17 +219,19 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(250, t);
-            Assert.AreEqual(42, result);
+            Assert.Equal(250, t);
+            Assert.Equal(42, result);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(100)
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void RunAsync_Cancelled()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var cts = new CancellationTokenSource();
             cts.Cancel();
 
@@ -243,15 +259,17 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(200, t);
+            Assert.Equal(200, t);
 
             xs.Subscriptions.AssertEqual(
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void RunAsync_Cancel()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var cts = new CancellationTokenSource();
 
             var scheduler = new TestScheduler();
@@ -279,16 +297,18 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(210, t);
+            Assert.Equal(210, t);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(100, 210)
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void RunAsync_Connectable()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var scheduler = new TestScheduler();
 
             var s = default(long);
@@ -314,14 +334,16 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(100, s);
-            Assert.AreEqual(260, t);
-            Assert.AreEqual(42, result);
+            Assert.Equal(100, s);
+            Assert.Equal(260, t);
+            Assert.Equal(42, result);
         }
 
-        [TestMethod]
+        [Fact]
         public void RunAsync_Connectable_Cancelled()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var cts = new CancellationTokenSource();
             cts.Cancel();
 
@@ -358,13 +380,15 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.IsFalse(s.HasValue);
-            Assert.AreEqual(200, t);
+            Assert.False(s.HasValue);
+            Assert.Equal(200, t);
         }
 
-        [TestMethod]
+        [Fact]
         public void RunAsync_Connectable_Cancel()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var cts = new CancellationTokenSource();
 
             var scheduler = new TestScheduler();
@@ -403,9 +427,9 @@ namespace ReactiveTests.Tests
 
             scheduler.Start();
 
-            Assert.AreEqual(100, s);
-            Assert.AreEqual(210, d);
-            Assert.AreEqual(210, t);
+            Assert.Equal(100, s);
+            Assert.Equal(210, d);
+            Assert.Equal(210, t);
         }
     }
 }

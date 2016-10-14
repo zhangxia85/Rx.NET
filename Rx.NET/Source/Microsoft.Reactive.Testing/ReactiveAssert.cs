@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
 using System.Collections.Generic;
@@ -7,12 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
-#if WINDOWS8
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-#else
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
+using Xunit;
 
 namespace Microsoft.Reactive.Testing
 {
@@ -46,12 +43,12 @@ namespace Microsoft.Reactive.Testing
         public static void AreElementsEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual)
         {
             if (expected == null)
-                throw new ArgumentNullException("expected");
+                throw new ArgumentNullException(nameof(expected));
             if (actual == null)
-                throw new ArgumentNullException("actual");
+                throw new ArgumentNullException(nameof(actual));
 
             if (!expected.SequenceEqual(actual))
-                Assert.Fail(Message(actual, expected));
+                Assert.True(false, Message(actual, expected));
         }
 
         /// <summary>
@@ -65,12 +62,12 @@ namespace Microsoft.Reactive.Testing
         public static void AreElementsEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, string message)
         {
             if (expected == null)
-                throw new ArgumentNullException("expected");
+                throw new ArgumentNullException(nameof(expected));
             if (actual == null)
-                throw new ArgumentNullException("actual");
+                throw new ArgumentNullException(nameof(actual));
 
             if (!expected.SequenceEqual(actual))
-                Assert.Fail(message);
+                Assert.True(false, message);
         }
 
         /// <summary>
@@ -83,9 +80,9 @@ namespace Microsoft.Reactive.Testing
         public static void AreElementsEqual<T>(IObservable<T> expected, IObservable<T> actual)
         {
             if (expected == null)
-                throw new ArgumentNullException("expected");
+                throw new ArgumentNullException(nameof(expected));
             if (actual == null)
-                throw new ArgumentNullException("actual");
+                throw new ArgumentNullException(nameof(actual));
 
             AreElementsEqual(expected.Materialize().ToEnumerable(), actual.Materialize().ToEnumerable());
         }
@@ -101,9 +98,9 @@ namespace Microsoft.Reactive.Testing
         public static void AreElementsEqual<T>(IObservable<T> expected, IObservable<T> actual, string message)
         {
             if (expected == null)
-                throw new ArgumentNullException("expected");
+                throw new ArgumentNullException(nameof(expected));
             if (actual == null)
-                throw new ArgumentNullException("actual");
+                throw new ArgumentNullException(nameof(actual));
 
             AreElementsEqual(expected.Materialize().ToEnumerable(), actual.Materialize().ToEnumerable(), message);
         }
@@ -117,7 +114,7 @@ namespace Microsoft.Reactive.Testing
         public static void Throws<TException>(Action action) where TException : Exception
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var failed = false;
             try
@@ -130,11 +127,11 @@ namespace Microsoft.Reactive.Testing
             }
             catch (Exception ex)
             {
-                Assert.Fail(string.Format(CultureInfo.CurrentCulture, "Expected {0} threw {1}.\r\n\r\nStack trace:\r\n{2}", typeof(TException).Name, ex.GetType().Name, ex.StackTrace));
+                Assert.True(false, string.Format(CultureInfo.CurrentCulture, "Expected {0} threw {1}.\r\n\r\nStack trace:\r\n{2}", typeof(TException).Name, ex.GetType().Name, ex.StackTrace));
             }
 
             if (failed)
-                Assert.Fail(string.Format(CultureInfo.CurrentCulture, "Expected {0}.", typeof(TException).Name));
+                Assert.True(false, string.Format(CultureInfo.CurrentCulture, "Expected {0}.", typeof(TException).Name));
         }
 
         /// <summary>
@@ -147,7 +144,7 @@ namespace Microsoft.Reactive.Testing
         public static void Throws<TException>(Action action, string message) where TException : Exception
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var failed = false;
             try
@@ -160,11 +157,11 @@ namespace Microsoft.Reactive.Testing
             }
             catch
             {
-                Assert.Fail(message);
+                Assert.True(false, message);
             }
 
             if (failed)
-                Assert.Fail(message);
+                Assert.True(false, message);
         }
 
         /// <summary>
@@ -177,7 +174,7 @@ namespace Microsoft.Reactive.Testing
         public static void Throws<TException>(TException exception, Action action) where TException : Exception
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var failed = false;
             try
@@ -187,15 +184,15 @@ namespace Microsoft.Reactive.Testing
             }
             catch (TException ex)
             {
-                Assert.AreSame(exception, ex);
+                Assert.Same(exception, ex);
             }
             catch (Exception ex)
             {
-                Assert.Fail(string.Format(CultureInfo.CurrentCulture, "Expected {0} threw {1}.\r\n\r\nStack trace:\r\n{2}", typeof(TException).Name, ex.GetType().Name, ex.StackTrace));
+                Assert.True(false, string.Format(CultureInfo.CurrentCulture, "Expected {0} threw {1}.\r\n\r\nStack trace:\r\n{2}", typeof(TException).Name, ex.GetType().Name, ex.StackTrace));
             }
 
             if (failed)
-                Assert.Fail(string.Format(CultureInfo.CurrentCulture, "Expected {0}.", typeof(TException).Name));
+                Assert.True(false, string.Format(CultureInfo.CurrentCulture, "Expected {0}.", typeof(TException).Name));
         }
 
         /// <summary>
@@ -209,7 +206,7 @@ namespace Microsoft.Reactive.Testing
         public static void Throws<TException>(TException exception, Action action, string message) where TException : Exception
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var failed = false;
             try
@@ -219,15 +216,15 @@ namespace Microsoft.Reactive.Testing
             }
             catch (TException ex)
             {
-                Assert.AreSame(exception, ex);
+                Assert.Same(exception, ex);
             }
             catch
             {
-                Assert.Fail(message);
+                Assert.True(false, message);
             }
 
             if (failed)
-                Assert.Fail(message);
+                Assert.True(false, message);
         }
 
         /// <summary>
@@ -240,9 +237,9 @@ namespace Microsoft.Reactive.Testing
         public static void AssertEqual<T>(this IEnumerable<T> actual, IEnumerable<T> expected)
         {
             if (actual == null)
-                throw new ArgumentNullException("actual");
+                throw new ArgumentNullException(nameof(actual));
             if (expected == null)
-                throw new ArgumentNullException("expected");
+                throw new ArgumentNullException(nameof(expected));
 
             ReactiveAssert.AreElementsEqual(expected, actual);
         }
@@ -257,9 +254,9 @@ namespace Microsoft.Reactive.Testing
         public static void AssertEqual<T>(this IEnumerable<T> actual, params T[] expected)
         {
             if (actual == null)
-                throw new ArgumentNullException("actual");
+                throw new ArgumentNullException(nameof(actual));
             if (expected == null)
-                throw new ArgumentNullException("expected");
+                throw new ArgumentNullException(nameof(expected));
 
             ReactiveAssert.AreElementsEqual(expected, actual);
         }
@@ -274,9 +271,9 @@ namespace Microsoft.Reactive.Testing
         public static void AssertEqual<T>(this IObservable<T> actual, IObservable<T> expected)
         {
             if (actual == null)
-                throw new ArgumentNullException("actual");
+                throw new ArgumentNullException(nameof(actual));
             if (expected == null)
-                throw new ArgumentNullException("expected");
+                throw new ArgumentNullException(nameof(expected));
 
             ReactiveAssert.AreElementsEqual(expected, actual);
         }

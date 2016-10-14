@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
 using System.Reactive.Disposables;
@@ -14,7 +16,10 @@ namespace System.Reactive.Concurrency
     {
         // TODO - Review whether this is too eager.
         // Make first use of Scheduler trigger access to and initialization of the CAL.
-        private static DefaultScheduler s_default = DefaultScheduler.Instance;
+
+        // HACK: Causes race condition with Locks in DefaultScheduler's static ctor chain
+        // private static DefaultScheduler s_default = DefaultScheduler.Instance;
+        
 
         /// <summary>
         /// Gets the current time according to the local machine's system clock.
@@ -68,7 +73,7 @@ namespace System.Reactive.Concurrency
         {
             get
             {
-                return s_default;
+                return DefaultScheduler.Instance;
             }
         }
 
@@ -133,7 +138,9 @@ namespace System.Reactive.Concurrency
 
         private static IScheduler Initialize(string name)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             var res = PlatformEnlightenmentProvider.Current.GetService<IScheduler>(name);
+#pragma warning restore CS0618 // Type or member is obsolete
             if (res == null)
                 throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Strings_Core.CANT_OBTAIN_SCHEDULER, name));
             return res;

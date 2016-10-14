@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.ComponentModel;
 using System.Threading;
@@ -12,7 +14,7 @@ namespace System.Reactive.Concurrency
     /// <seealso cref="Scheduler.CurrentThread">Singleton instance of this type exposed through this static property.</seealso>
     public sealed class CurrentThreadScheduler : LocalScheduler
     {
-        private static readonly CurrentThreadScheduler s_instance = new CurrentThreadScheduler();
+        private static readonly Lazy<CurrentThreadScheduler> s_instance = new Lazy<CurrentThreadScheduler>(() => new CurrentThreadScheduler());
 
         CurrentThreadScheduler()
         {
@@ -23,7 +25,7 @@ namespace System.Reactive.Concurrency
         /// </summary>
         public static CurrentThreadScheduler Instance
         {
-            get { return s_instance; }
+            get { return s_instance.Value; }
         }
 
 #if !NO_TLS
@@ -135,7 +137,7 @@ namespace System.Reactive.Concurrency
         public override IDisposable Schedule<TState>(TState state, TimeSpan dueTime, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var dt = Time + Scheduler.Normalize(dueTime);
 

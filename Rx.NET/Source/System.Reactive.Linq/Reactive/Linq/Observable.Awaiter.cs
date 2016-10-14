@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if HAS_AWAIT
 using System.Threading;
@@ -20,7 +22,7 @@ namespace System.Reactive.Linq
         public static AsyncSubject<TSource> GetAwaiter<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.GetAwaiter<TSource>(source);
         }
@@ -36,7 +38,7 @@ namespace System.Reactive.Linq
         public static AsyncSubject<TSource> GetAwaiter<TSource>(this IConnectableObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.GetAwaiter<TSource>(source);
         }
@@ -53,7 +55,7 @@ namespace System.Reactive.Linq
         public static AsyncSubject<TSource> RunAsync<TSource>(this IObservable<TSource> source, CancellationToken cancellationToken)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.RunAsync<TSource>(source, cancellationToken);
         }
@@ -70,7 +72,7 @@ namespace System.Reactive.Linq
         public static AsyncSubject<TSource> RunAsync<TSource>(this IConnectableObservable<TSource> source, CancellationToken cancellationToken)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return s_impl.RunAsync<TSource>(source, cancellationToken);
         }

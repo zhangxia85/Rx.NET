@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Collections.Generic;
 using System.Reactive.Disposables;
@@ -101,7 +103,7 @@ namespace System.Reactive.Concurrency
         public EventLoopScheduler(Func<ThreadStart, Thread> threadFactory)
         {
             if (threadFactory == null)
-                throw new ArgumentNullException("threadFactory");
+                throw new ArgumentNullException(nameof(threadFactory));
 #else
         internal EventLoopScheduler(Func<ThreadStart, Thread> threadFactory)
         {
@@ -156,7 +158,7 @@ namespace System.Reactive.Concurrency
         public override IDisposable Schedule<TState>(TState state, TimeSpan dueTime, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var due = _stopwatch.Elapsed + dueTime;
             var si = new ScheduledItem<TimeSpan, TState>(this, state, action, due);
@@ -197,9 +199,9 @@ namespace System.Reactive.Concurrency
         public IDisposable SchedulePeriodic<TState>(TState state, TimeSpan period, Func<TState, TState> action)
         {
             if (period < TimeSpan.Zero)
-                throw new ArgumentOutOfRangeException("period");
+                throw new ArgumentOutOfRangeException(nameof(period));
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var start = _stopwatch.Elapsed;
             var next = start + period;

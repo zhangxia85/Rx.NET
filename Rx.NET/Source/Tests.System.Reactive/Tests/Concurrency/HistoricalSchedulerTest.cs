@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
 using System.Collections.Generic;
@@ -6,11 +8,11 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public class HistoricalSchedulerTest
     {
         public DateTimeOffset Time(int i)
@@ -18,17 +20,17 @@ namespace ReactiveTests.Tests
             return new DateTimeOffset(1979, 10, 31, 4, 30, 15, TimeSpan.Zero).AddDays(i);
         }
 
-        [TestMethod]
+        [Fact]
         public void Ctor()
         {
             var s = new HistoricalScheduler();
 
-            Assert.AreEqual(DateTimeOffset.MinValue, s.Clock);
-            Assert.AreEqual(DateTimeOffset.MinValue, s.Now);
-            Assert.AreEqual(false, s.IsEnabled);
+            Assert.Equal(DateTimeOffset.MinValue, s.Clock);
+            Assert.Equal(DateTimeOffset.MinValue, s.Now);
+            Assert.Equal(false, s.IsEnabled);
         }
 
-        [TestMethod]
+        [Fact]
         public void Start_Stop()
         {
             var s = new HistoricalScheduler();
@@ -47,23 +49,23 @@ namespace ReactiveTests.Tests
 
             s.Start();
 
-            Assert.AreEqual(Time(2), s.Now);
-            Assert.AreEqual(Time(2), s.Clock);
+            Assert.Equal(Time(2), s.Now);
+            Assert.Equal(Time(2), s.Clock);
 
             s.Start();
 
-            Assert.AreEqual(Time(4), s.Now);
-            Assert.AreEqual(Time(4), s.Clock);
+            Assert.Equal(Time(4), s.Now);
+            Assert.Equal(Time(4), s.Clock);
 
             s.Start();
 
-            Assert.AreEqual(Time(6), s.Now);
-            Assert.AreEqual(Time(6), s.Clock);
+            Assert.Equal(Time(6), s.Now);
+            Assert.Equal(Time(6), s.Clock);
 
             s.Start();
 
-            Assert.AreEqual(Time(6), s.Now);
-            Assert.AreEqual(Time(6), s.Clock);
+            Assert.Equal(Time(6), s.Now);
+            Assert.Equal(Time(6), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(1, Time(0)),
@@ -73,7 +75,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Order()
         {
             var s = new HistoricalScheduler();
@@ -97,7 +99,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Cancellation()
         {
             var s = new HistoricalScheduler();
@@ -119,7 +121,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void AdvanceTo_ArgumentChecking()
         {
             var now = DateTimeOffset.Now;
@@ -129,7 +131,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentOutOfRangeException>(() => s.AdvanceTo(now.Subtract(TimeSpan.FromSeconds(1))));
         }
 
-        [TestMethod]
+        [Fact]
         public void AdvanceTo()
         {
             var s = new HistoricalScheduler();
@@ -144,8 +146,8 @@ namespace ReactiveTests.Tests
 
             s.AdvanceTo(Time(8));
 
-            Assert.AreEqual(Time(8), s.Now);
-            Assert.AreEqual(Time(8), s.Clock);
+            Assert.Equal(Time(8), s.Now);
+            Assert.Equal(Time(8), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -155,8 +157,8 @@ namespace ReactiveTests.Tests
 
             s.AdvanceTo(Time(8));
 
-            Assert.AreEqual(Time(8), s.Now);
-            Assert.AreEqual(Time(8), s.Clock);
+            Assert.Equal(Time(8), s.Now);
+            Assert.Equal(Time(8), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -169,8 +171,8 @@ namespace ReactiveTests.Tests
 
             ReactiveAssert.Throws<ArgumentOutOfRangeException>(() => s.AdvanceTo(Time(4)));
 
-            Assert.AreEqual(Time(8), s.Now);
-            Assert.AreEqual(Time(8), s.Clock);
+            Assert.Equal(Time(8), s.Now);
+            Assert.Equal(Time(8), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -180,8 +182,8 @@ namespace ReactiveTests.Tests
 
             s.AdvanceTo(Time(10));
 
-            Assert.AreEqual(Time(10), s.Now);
-            Assert.AreEqual(Time(10), s.Clock);
+            Assert.Equal(Time(10), s.Now);
+            Assert.Equal(Time(10), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -194,8 +196,8 @@ namespace ReactiveTests.Tests
 
             s.AdvanceTo(Time(100));
 
-            Assert.AreEqual(Time(100), s.Now);
-            Assert.AreEqual(Time(100), s.Clock);
+            Assert.Equal(Time(100), s.Now);
+            Assert.Equal(Time(100), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -208,7 +210,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void AdvanceBy_ArgumentChecking()
         {
             var s = new HistoricalScheduler();
@@ -216,7 +218,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentOutOfRangeException>(() => s.AdvanceBy(TimeSpan.FromSeconds(-1)));
         }
 
-        [TestMethod]
+        [Fact]
         public void AdvanceBy()
         {
             var s = new HistoricalScheduler();
@@ -231,8 +233,8 @@ namespace ReactiveTests.Tests
 
             s.AdvanceBy(Time(8) - s.Now);
 
-            Assert.AreEqual(Time(8), s.Now);
-            Assert.AreEqual(Time(8), s.Clock);
+            Assert.Equal(Time(8), s.Now);
+            Assert.Equal(Time(8), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -245,8 +247,8 @@ namespace ReactiveTests.Tests
 
             ReactiveAssert.Throws<ArgumentOutOfRangeException>(() => s.AdvanceBy(TimeSpan.FromDays(-4)));
 
-            Assert.AreEqual(Time(8), s.Now);
-            Assert.AreEqual(Time(8), s.Clock);
+            Assert.Equal(Time(8), s.Now);
+            Assert.Equal(Time(8), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -256,8 +258,8 @@ namespace ReactiveTests.Tests
 
             s.AdvanceBy(TimeSpan.Zero);
 
-            Assert.AreEqual(Time(8), s.Now);
-            Assert.AreEqual(Time(8), s.Clock);
+            Assert.Equal(Time(8), s.Now);
+            Assert.Equal(Time(8), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -267,8 +269,8 @@ namespace ReactiveTests.Tests
 
             s.AdvanceBy(TimeSpan.FromDays(2));
 
-            Assert.AreEqual(Time(10), s.Now);
-            Assert.AreEqual(Time(10), s.Clock);
+            Assert.Equal(Time(10), s.Now);
+            Assert.Equal(Time(10), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -281,8 +283,8 @@ namespace ReactiveTests.Tests
 
             s.AdvanceBy(TimeSpan.FromDays(90));
 
-            Assert.AreEqual(Time(100), s.Now);
-            Assert.AreEqual(Time(100), s.Clock);
+            Assert.Equal(Time(100), s.Now);
+            Assert.Equal(Time(100), s.Clock);
 
             list.AssertEqual(
                 new Timestamped<int>(0, Time(0)),
@@ -295,28 +297,28 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void IsEnabled()
         {
             var s = new HistoricalScheduler();
 
-            Assert.AreEqual(false, s.IsEnabled);
+            Assert.Equal(false, s.IsEnabled);
 
             s.Schedule(() =>
             {
-                Assert.AreEqual(true, s.IsEnabled);
+                Assert.Equal(true, s.IsEnabled);
                 s.Stop();
-                Assert.AreEqual(false, s.IsEnabled);
+                Assert.Equal(false, s.IsEnabled);
             });
 
-            Assert.AreEqual(false, s.IsEnabled);
+            Assert.Equal(false, s.IsEnabled);
 
             s.Start();
 
-            Assert.AreEqual(false, s.IsEnabled);
+            Assert.Equal(false, s.IsEnabled);
         }
 
-        [TestMethod]
+        [Fact]
         public void No_Nested_AdvanceBy()
         {
             var s = new HistoricalScheduler();
@@ -326,7 +328,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<InvalidOperationException>(() => s.Start());
         }
 
-        [TestMethod]
+        [Fact]
         public void No_Nested_AdvanceTo()
         {
             var s = new HistoricalScheduler();
@@ -336,7 +338,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<InvalidOperationException>(() => s.Start());
         }
 
-        [TestMethod]
+        [Fact]
         public void Sleep_ArgumentChecking()
         {
             var s = new HistoricalScheduler(DateTimeOffset.Now);
@@ -344,7 +346,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentOutOfRangeException>(() => s.Sleep(TimeSpan.FromSeconds(-1)));
         }
 
-        [TestMethod]
+        [Fact]
         public void Sleep1()
         {
             var now = new DateTimeOffset(1983, 2, 11, 12, 0, 0, TimeSpan.Zero);
@@ -353,10 +355,10 @@ namespace ReactiveTests.Tests
 
             s.Sleep(TimeSpan.FromDays(1));
 
-            Assert.AreEqual(now + TimeSpan.FromDays(1), s.Clock);
+            Assert.Equal(now + TimeSpan.FromDays(1), s.Clock);
         }
 
-        [TestMethod]
+        [Fact]
         public void Sleep2()
         {
             var s = new HistoricalScheduler();
@@ -373,16 +375,16 @@ namespace ReactiveTests.Tests
 
             s.AdvanceTo(s.Now + TimeSpan.FromMinutes(5));
 
-            Assert.AreEqual(2, n);
+            Assert.Equal(2, n);
         }
 
-        [TestMethod]
+        [Fact]
         public void WithComparer_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new HistoricalScheduler(DateTimeOffset.Now, null));
         }
 
-        [TestMethod]
+        [Fact]
         public void WithComparer()
         {
             var now = DateTimeOffset.Now;
@@ -396,7 +398,7 @@ namespace ReactiveTests.Tests
 
             s.Start();
 
-            Assert.IsTrue(new[] { 1, 2 }.SequenceEqual(res));
+            Assert.True(new[] { 1, 2 }.SequenceEqual(res));
         }
 
         class ReverseComparer<T> : IComparer<T>

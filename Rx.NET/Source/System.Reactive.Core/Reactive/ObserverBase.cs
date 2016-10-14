@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Threading;
 
@@ -27,7 +29,7 @@ namespace System.Reactive
         /// <param name="value">Next element in the sequence.</param>
         public void OnNext(T value)
         {
-            if (isStopped == 0)
+            if (Volatile.Read(ref isStopped) == 0)
                 OnNextCore(value);
         }
 
@@ -46,7 +48,7 @@ namespace System.Reactive
         public void OnError(Exception error)
         {
             if (error == null)
-                throw new ArgumentNullException("error");
+                throw new ArgumentNullException(nameof(error));
 
             if (Interlocked.Exchange(ref isStopped, 1) == 0)
             {
@@ -96,7 +98,7 @@ namespace System.Reactive
         {
             if (disposing)
             {
-                isStopped = 1;
+                Volatile.Write(ref isStopped, 1);
             }
         }
 

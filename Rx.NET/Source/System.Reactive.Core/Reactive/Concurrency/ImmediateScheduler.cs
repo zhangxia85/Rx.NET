@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Threading;
 using System.Reactive.Disposables;
@@ -11,7 +13,7 @@ namespace System.Reactive.Concurrency
     /// <seealso cref="Scheduler.Immediate">Singleton instance of this type exposed through this static property.</seealso>
     public sealed class ImmediateScheduler : LocalScheduler
     {
-        private static readonly ImmediateScheduler s_instance = new ImmediateScheduler();
+        private static readonly Lazy<ImmediateScheduler> s_instance = new Lazy<ImmediateScheduler>(() => new ImmediateScheduler());
 
         ImmediateScheduler()
         {
@@ -22,7 +24,7 @@ namespace System.Reactive.Concurrency
         /// </summary>
         public static ImmediateScheduler Instance
         {
-            get { return s_instance; }
+            get { return s_instance.Value; }
         }
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace System.Reactive.Concurrency
         public override IDisposable Schedule<TState>(TState state, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             return action(new AsyncLockScheduler(), state);
         }
@@ -53,7 +55,7 @@ namespace System.Reactive.Concurrency
         public override IDisposable Schedule<TState>(TState state, TimeSpan dueTime, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var dt = Scheduler.Normalize(dueTime);
             if (dt.Ticks > 0)
@@ -71,7 +73,7 @@ namespace System.Reactive.Concurrency
             public override IDisposable Schedule<TState>(TState state, Func<IScheduler, TState, IDisposable> action)
             {
                 if (action == null)
-                    throw new ArgumentNullException("action");
+                    throw new ArgumentNullException(nameof(action));
 
                 var m = new SingleAssignmentDisposable();
 
@@ -90,7 +92,7 @@ namespace System.Reactive.Concurrency
             public override IDisposable Schedule<TState>(TState state, TimeSpan dueTime, Func<IScheduler, TState, IDisposable> action)
             {
                 if (action == null)
-                    throw new ArgumentNullException("action");
+                    throw new ArgumentNullException(nameof(action));
 
                 if (dueTime.Ticks <= 0)
                     return Schedule<TState>(state, action);

@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if !NO_REMOTING
 using System;
@@ -7,18 +9,17 @@ using System.Reactive.Concurrency;
 using System.Reactive.PlatformServices;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     [Serializable]
     public class DefaultConcurrencyAbstractionLayerTest
     {
         private AppDomain _domain;
 
-        [TestInitialize]
-        public void Init()
+        public DefaultConcurrencyAbstractionLayerTest()
         {
             if (_domain == null)
             {
@@ -75,7 +76,7 @@ namespace ReactiveTests.Tests
             _domain.DoCallBack(a);
         }
 
-        [TestMethod]
+        [Fact]
         public void Sleep()
         {
             var ran = new MarshalByRefCell<bool>();
@@ -90,10 +91,10 @@ namespace ReactiveTests.Tests
                 });
             });
 
-            Assert.IsTrue(ran.Value);
+            Assert.True(ran.Value);
         }
 
-        [TestMethod]
+        [Fact]
         public void QueueUserWorkItem()
         {
             var e = new MarshalByRefCell<ManualResetEvent> { Value = new ManualResetEvent(false) };
@@ -111,7 +112,7 @@ namespace ReactiveTests.Tests
             e.Value.WaitOne();
         }
 
-        [TestMethod]
+        [Fact]
         public void StartTimer()
         {
             var e = new MarshalByRefCell<ManualResetEvent> { Value = new ManualResetEvent(false) };
@@ -129,7 +130,7 @@ namespace ReactiveTests.Tests
             e.Value.WaitOne();
         }
 
-        [TestMethod]
+        [Fact]
         public void StartTimer_Cancel()
         {
             Run(StartTimer_Cancel_Callback);
@@ -143,7 +144,7 @@ namespace ReactiveTests.Tests
             }).Dispose();
         }
 
-        [TestMethod]
+        [Fact]
         public void StartPeriodicTimer()
         {
             var e = new MarshalByRefCell<ManualResetEvent> { Value = new ManualResetEvent(false) };
@@ -165,7 +166,7 @@ namespace ReactiveTests.Tests
             e.Value.WaitOne();
         }
 
-        [TestMethod]
+        [Fact]
         public void StartPeriodicTimer_Cancel()
         {
             Run(StartPeriodicTimer_Cancel_Callback);
@@ -179,7 +180,7 @@ namespace ReactiveTests.Tests
             }).Dispose();
         }
 
-        [TestMethod]
+        [Fact]
         public void StartPeriodicTimer_Fast()
         {
             var e = new MarshalByRefCell<ManualResetEvent> { Value = new ManualResetEvent(false) };
@@ -201,7 +202,7 @@ namespace ReactiveTests.Tests
             e.Value.WaitOne();
         }
 
-        [TestMethod]
+        [Fact]
         public void StartPeriodicTimer_Fast_Cancel()
         {
             var e = new MarshalByRefCell<ManualResetEvent> { Value = new ManualResetEvent(false) };
@@ -239,16 +240,16 @@ namespace ReactiveTests.Tests
 
             var newValue = (int)_domain.GetData("value");
 
-            Assert.IsTrue(newValue >= value);
+            Assert.True(newValue >= value);
 
             Thread.Sleep(TimeSpan.FromMilliseconds(50));
 
             value = (int)_domain.GetData("value");
 
-            Assert.AreEqual(newValue, value);
+            Assert.Equal(newValue, value);
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateThread()
         {
             var e = new MarshalByRefCell<ManualResetEvent> { Value = new ManualResetEvent(false) };
@@ -318,11 +319,11 @@ namespace ReactiveTests.Tests
             });
 
             e.Value.WaitOne();
-            Assert.IsTrue(string.IsNullOrEmpty(r.Value));
+            Assert.True(string.IsNullOrEmpty(r.Value));
         }
 
 #if !NO_TPL
-        [TestMethod]
+        [Fact]
         public void Cant_Locate_Scheduler()
         {
             if (!Utils.IsRunningWithPortableLibraryBinaries())
@@ -350,12 +351,12 @@ namespace ReactiveTests.Tests
                 }
             });
 
-            Assert.IsTrue(e.Value != null && e.Value is NotSupportedException);
+            Assert.True(e.Value != null && e.Value is NotSupportedException);
         }
 #endif
 
 #if !NO_PERF && !NO_STOPWATCH
-        [TestMethod]
+        [Fact]
         public void Stopwatch()
         {
             var e = new MarshalByRefCell<bool>();
@@ -374,20 +375,24 @@ namespace ReactiveTests.Tests
                 state.Value = snd > fst;
             });
 
-            Assert.IsTrue(e.Value);
+            Assert.True(e.Value);
         }
 #endif
 
-        [TestMethod]
+        [Fact]
         public void EnsureLoaded()
         {
-            Assert.IsTrue(EnlightenmentProvider.EnsureLoaded());
+            Assert.True(EnlightenmentProvider.EnsureLoaded());
         }
     }
 
     public class MarshalByRefCell<T> : MarshalByRefObject
     {
         public T Value;
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
     }
 
     public class MarshalByRefAction : MarshalByRefObject
@@ -402,6 +407,10 @@ namespace ReactiveTests.Tests
         public void Invoke()
         {
             _action();
+        }
+        public override object InitializeLifetimeService()
+        {
+            return null;
         }
     }
 }

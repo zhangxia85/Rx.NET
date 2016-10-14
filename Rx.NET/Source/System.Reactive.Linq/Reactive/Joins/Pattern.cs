@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 namespace System.Reactive.Joins
 {
@@ -39,7 +41,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TResult>(this, selector);
         }
@@ -72,7 +74,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3> And<TSource3>(IObservable<TSource3> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3>(First, Second, other);
         }
@@ -87,7 +89,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TResult>(this, selector);
         }
@@ -123,7 +125,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4> And<TSource4>(IObservable<TSource4> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4>(First, Second, Third, other);
         }
@@ -138,7 +140,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TResult>(this, selector);
         }
@@ -178,7 +180,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5> And<TSource5>(IObservable<TSource5> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5>(First, Second, Third, Fourth, other);
         }
@@ -194,7 +196,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TResult>(this, selector);
         }
@@ -237,7 +239,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6> And<TSource6>(IObservable<TSource6> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6>(First, Second, Third, Fourth, Fifth, other);
         }
@@ -252,7 +254,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TResult>(this, selector);
         }
@@ -297,7 +299,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7> And<TSource7>(IObservable<TSource7> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7>(First, Second, Third, Fourth, Fifth, Sixth, other);
         }
@@ -312,7 +314,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TResult>(this, selector);
         }
@@ -360,7 +362,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8> And<TSource8>(IObservable<TSource8> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, other);
         }
@@ -375,7 +377,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TResult>(this, selector);
         }
@@ -426,7 +428,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9> And<TSource9>(IObservable<TSource9> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, other);
         }
@@ -441,7 +443,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TResult>(this, selector);
         }
@@ -495,7 +497,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10> And<TSource10>(IObservable<TSource10> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, other);
         }
@@ -510,7 +512,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TResult>(this, selector);
         }
@@ -567,7 +569,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11> And<TSource11>(IObservable<TSource11> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, Tenth, other);
         }
@@ -582,7 +584,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TResult>(this, selector);
         }
@@ -642,7 +644,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12> And<TSource12>(IObservable<TSource12> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, Tenth, Eleventh, other);
         }
@@ -657,7 +659,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TResult>(this, selector);
         }
@@ -720,7 +722,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13> And<TSource13>(IObservable<TSource13> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, Tenth, Eleventh, Twelfth, other);
         }
@@ -735,7 +737,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TResult>(this, selector);
         }
@@ -801,7 +803,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14> And<TSource14>(IObservable<TSource14> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, Tenth, Eleventh, Twelfth, Thirteenth, other);
         }
@@ -816,7 +818,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TResult>(this, selector);
         }
@@ -885,7 +887,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TSource15> And<TSource15>(IObservable<TSource15> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TSource15>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, Tenth, Eleventh, Twelfth, Thirteenth, Fourteenth, other);
         }
@@ -900,7 +902,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TResult>(this, selector);
         }
@@ -972,7 +974,7 @@ namespace System.Reactive.Joins
         public Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TSource15, TSource16> And<TSource16>(IObservable<TSource16> other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             return new Pattern<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TSource15, TSource16>(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, Tenth, Eleventh, Twelfth, Thirteenth, Fourteenth, Fifteenth, other);
         }
@@ -987,7 +989,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TSource15, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TSource15, TResult>(this, selector);
         }
@@ -1062,7 +1064,7 @@ namespace System.Reactive.Joins
         public Plan<TResult> Then<TResult>(Func<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TSource15, TSource16, TResult> selector)
         {
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new Plan<TSource1, TSource2, TSource3, TSource4, TSource5, TSource6, TSource7, TSource8, TSource9, TSource10, TSource11, TSource12, TSource13, TSource14, TSource15, TSource16, TResult>(this, selector);
         }

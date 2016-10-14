@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if !WINDOWS
 using System.Reactive.Concurrency;
@@ -25,9 +27,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> ObserveOn<TSource>(this IObservable<TSource> source, Dispatcher dispatcher)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (dispatcher == null)
-                throw new ArgumentNullException("dispatcher");
+                throw new ArgumentNullException(nameof(dispatcher));
 
             return ObserveOn_<TSource>(source, dispatcher);
         }
@@ -45,9 +47,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> ObserveOn<TSource>(this IObservable<TSource> source, Dispatcher dispatcher, DispatcherPriority priority)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (dispatcher == null)
-                throw new ArgumentNullException("dispatcher");
+                throw new ArgumentNullException(nameof(dispatcher));
 
             return ObserveOn_<TSource>(source, dispatcher, priority);
         }
@@ -64,9 +66,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> ObserveOn<TSource>(this IObservable<TSource> source, DispatcherScheduler scheduler)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (scheduler == null)
-                throw new ArgumentNullException("scheduler");
+                throw new ArgumentNullException(nameof(scheduler));
 
 #if HAS_DISPATCHER_PRIORITY
             return ObserveOn_<TSource>(source, scheduler.Dispatcher, scheduler.Priority);
@@ -105,9 +107,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> ObserveOn<TSource>(this IObservable<TSource> source, DispatcherObject dispatcherObject)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (dispatcherObject == null)
-                throw new ArgumentNullException("dispatcherObject");
+                throw new ArgumentNullException(nameof(dispatcherObject));
 
             return ObserveOn_<TSource>(source, dispatcherObject.Dispatcher);
         }
@@ -126,9 +128,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> ObserveOn<TSource>(this IObservable<TSource> source, DispatcherObject dispatcherObject, DispatcherPriority priority)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (dispatcherObject == null)
-                throw new ArgumentNullException("dispatcherObject");
+                throw new ArgumentNullException(nameof(dispatcherObject));
 
             return ObserveOn_<TSource>(source, dispatcherObject.Dispatcher, priority);
         }
@@ -144,7 +146,7 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> ObserveOnDispatcher<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
 #if USE_SL_DISPATCHER
             return ObserveOn_<TSource>(source, System.Windows.Deployment.Current.Dispatcher);
@@ -165,7 +167,7 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> ObserveOnDispatcher<TSource>(this IObservable<TSource> source, DispatcherPriority priority)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return ObserveOn_<TSource>(source, DispatcherScheduler.Current.Dispatcher, priority);
         }
@@ -200,9 +202,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> SubscribeOn<TSource>(this IObservable<TSource> source, Dispatcher dispatcher)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (dispatcher == null)
-                throw new ArgumentNullException("dispatcher");
+                throw new ArgumentNullException(nameof(dispatcher));
 
             return SubscribeOn_<TSource>(source, dispatcher);
         }
@@ -224,9 +226,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> SubscribeOn<TSource>(this IObservable<TSource> source, Dispatcher dispatcher, DispatcherPriority priority)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (dispatcher == null)
-                throw new ArgumentNullException("dispatcher");
+                throw new ArgumentNullException(nameof(dispatcher));
 
             return SubscribeOn_<TSource>(source, dispatcher, priority);
         }
@@ -247,9 +249,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> SubscribeOn<TSource>(this IObservable<TSource> source, DispatcherScheduler scheduler)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (scheduler == null)
-                throw new ArgumentNullException("scheduler");
+                throw new ArgumentNullException(nameof(scheduler));
 
 #if HAS_DISPATCHER_PRIORITY
             return SubscribeOn_<TSource>(source, scheduler.Dispatcher, scheduler.Priority);
@@ -296,9 +298,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> SubscribeOn<TSource>(this IObservable<TSource> source, DispatcherObject dispatcherObject)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (dispatcherObject == null)
-                throw new ArgumentNullException("dispatcherObject");
+                throw new ArgumentNullException(nameof(dispatcherObject));
 
             return SubscribeOn_<TSource>(source, dispatcherObject.Dispatcher);
         }
@@ -321,9 +323,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> SubscribeOn<TSource>(this IObservable<TSource> source, DispatcherObject dispatcherObject, DispatcherPriority priority)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (dispatcherObject == null)
-                throw new ArgumentNullException("dispatcherObject");
+                throw new ArgumentNullException(nameof(dispatcherObject));
 
             return SubscribeOn_<TSource>(source, dispatcherObject.Dispatcher, priority);
         }
@@ -343,7 +345,7 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> SubscribeOnDispatcher<TSource>(this IObservable<TSource> source)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
 #if USE_SL_DISPATCHER
             return SubscribeOn_<TSource>(source, System.Windows.Deployment.Current.Dispatcher);
@@ -368,7 +370,7 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> SubscribeOnDispatcher<TSource>(this IObservable<TSource> source, DispatcherPriority priority)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             return SubscribeOn_<TSource>(source, DispatcherScheduler.Current.Dispatcher, priority);
         }

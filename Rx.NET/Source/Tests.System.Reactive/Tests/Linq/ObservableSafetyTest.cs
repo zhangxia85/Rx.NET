@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
 using System.Reactive;
@@ -6,21 +8,21 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public partial class ObservableSafetyTest : ReactiveTest
     {
-        [TestMethod]
+        [Fact]
         public void SubscribeSafe_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => ObservableExtensions.SubscribeSafe<int>(default(IObservable<int>), Observer.Create<int>(_ => { })));
             ReactiveAssert.Throws<ArgumentNullException>(() => ObservableExtensions.SubscribeSafe<int>(Observable.Return(42), default(IObserver<int>)));
         }
 
-        [TestMethod]
+        [Fact]
         public void Safety_Subscription1()
         {
             var ex = new Exception();
@@ -29,14 +31,14 @@ namespace ReactiveTests.Tests
             var res = xs.Where(x => true).Select(x => x);
 
             var err = default(Exception);
-            var d = res.Subscribe(x => { Assert.Fail(); }, ex_ => { err = ex_; }, () => { Assert.Fail(); });
+            var d = res.Subscribe(x => { Assert.True(false); }, ex_ => { err = ex_; }, () => { Assert.True(false); });
 
-            Assert.AreSame(ex, err);
+            Assert.Same(ex, err);
 
             d.Dispose();
         }
 
-        [TestMethod]
+        [Fact]
         public void Safety_Subscription2()
         {
             var ex = new Exception();
@@ -81,7 +83,7 @@ namespace ReactiveTests.Tests
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void ObservableBase_ObserverThrows()
         {
             var ex = new Exception();
@@ -117,10 +119,10 @@ namespace ReactiveTests.Tests
             disposed.WaitOne();
             failed.WaitOne();
 
-            Assert.AreSame(ex, err);
+            Assert.Same(ex, err);
         }
 
-        [TestMethod]
+        [Fact]
         public void ObservableBase_ObserverThrows_CustomObserver()
         {
             var ex = new Exception();
@@ -153,10 +155,10 @@ namespace ReactiveTests.Tests
             disposed.WaitOne();
             failed.WaitOne();
 
-            Assert.AreSame(ex, err);
+            Assert.Same(ex, err);
         }
 
-        [TestMethod]
+        [Fact]
         public void Producer_ObserverThrows()
         {
             var ex = new Exception();
@@ -189,14 +191,14 @@ namespace ReactiveTests.Tests
             try
             {
                 scheduler.Start();
-                Assert.Fail();
+                Assert.True(false);
             }
             catch (Exception err)
             {
-                Assert.AreSame(ex, err);
+                Assert.Same(ex, err);
             }
 
-            Assert.AreEqual(225, scheduler.Clock);
+            Assert.Equal(225, scheduler.Clock);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(200, 225)
@@ -207,7 +209,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Producer_ObserverThrows_CustomObserver()
         {
             var ex = new Exception();
@@ -236,14 +238,14 @@ namespace ReactiveTests.Tests
             try
             {
                 scheduler.Start();
-                Assert.Fail();
+                Assert.True(false);
             }
             catch (Exception err)
             {
-                Assert.AreSame(ex, err);
+                Assert.Same(ex, err);
             }
 
-            Assert.AreEqual(225, scheduler.Clock);
+            Assert.Equal(225, scheduler.Clock);
 
             xs.Subscriptions.AssertEqual(
                 Subscribe(200, 225)

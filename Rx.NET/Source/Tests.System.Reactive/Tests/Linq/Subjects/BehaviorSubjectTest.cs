@@ -1,29 +1,31 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
 using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public partial class BehaviorSubjectTest : ReactiveTest
     {
-        [TestMethod]
+        [Fact]
         public void Subscribe_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new BehaviorSubject<int>(1).Subscribe(null));
         }
 
-        [TestMethod]
+        [Fact]
         public void OnError_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new BehaviorSubject<int>(1).OnError(null));
         }
 
-        [TestMethod]
+        [Fact]
         public void Infinite()
         {
             var scheduler = new TestScheduler();
@@ -90,7 +92,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Finite()
         {
             var scheduler = new TestScheduler();
@@ -155,7 +157,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Error()
         {
             var scheduler = new TestScheduler();
@@ -222,7 +224,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void Canceled()
         {
             var scheduler = new TestScheduler();
@@ -275,7 +277,7 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void SubjectDisposed()
         {
             var scheduler = new TestScheduler();
@@ -333,174 +335,236 @@ namespace ReactiveTests.Tests
             );
         }
 
-        [TestMethod]
+        [Fact]
         public void HasObservers()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
 
             var d1 = s.Subscribe(_ => { });
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
 
             d1.Dispose();
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
 
             var d2 = s.Subscribe(_ => { });
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
 
             var d3 = s.Subscribe(_ => { });
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
 
             d2.Dispose();
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
 
             d3.Dispose();
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
         }
 
-        [TestMethod]
+        [Fact]
         public void HasObservers_Dispose1()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
+            Assert.False(s.IsDisposed);
 
             var d = s.Subscribe(_ => { });
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
+            Assert.False(s.IsDisposed);
 
             s.Dispose();
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
+            Assert.True(s.IsDisposed);
 
             d.Dispose();
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
+            Assert.True(s.IsDisposed);
         }
 
-        [TestMethod]
+        [Fact]
         public void HasObservers_Dispose2()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
+            Assert.False(s.IsDisposed);
 
             var d = s.Subscribe(_ => { });
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
+            Assert.False(s.IsDisposed);
 
             d.Dispose();
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
+            Assert.False(s.IsDisposed);
 
             s.Dispose();
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
+            Assert.True(s.IsDisposed);
         }
 
-        [TestMethod]
+        [Fact]
         public void HasObservers_Dispose3()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
+            Assert.False(s.IsDisposed);
 
             s.Dispose();
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
+            Assert.True(s.IsDisposed);
         }
 
-        [TestMethod]
+        [Fact]
         public void HasObservers_OnCompleted()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
 
             var d = s.Subscribe(_ => { });
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
 
             s.OnNext(42);
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
 
             s.OnCompleted();
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
         }
 
-        [TestMethod]
+        [Fact]
         public void HasObservers_OnError()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
 
             var d = s.Subscribe(_ => { }, ex => { });
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
 
             s.OnNext(42);
-            Assert.IsTrue(s.HasObservers);
+            Assert.True(s.HasObservers);
 
             s.OnError(new Exception());
-            Assert.IsFalse(s.HasObservers);
+            Assert.False(s.HasObservers);
         }
 
-        [TestMethod]
+        [Fact]
         public void Value_Initial()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.AreEqual(42, s.Value);
+            Assert.Equal(42, s.Value);
+
+            var x = default(int);
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(42, x);
         }
 
-        [TestMethod]
+        [Fact]
         public void Value_First()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.AreEqual(42, s.Value);
+            Assert.Equal(42, s.Value);
+
+            var x = default(int);
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(42, x);
 
             s.OnNext(43);
-            Assert.AreEqual(43, s.Value);
+            Assert.Equal(43, s.Value);
+
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(43, x);
         }
 
-        [TestMethod]
+        [Fact]
         public void Value_Second()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.AreEqual(42, s.Value);
+            Assert.Equal(42, s.Value);
+
+            var x = default(int);
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(42, x);
 
             s.OnNext(43);
-            Assert.AreEqual(43, s.Value);
+            Assert.Equal(43, s.Value);
+
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(43, x);
 
             s.OnNext(44);
-            Assert.AreEqual(44, s.Value);
+            Assert.Equal(44, s.Value);
+
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(44, x);
         }
 
-        [TestMethod]
+        [Fact]
         public void Value_FrozenAfterOnCompleted()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.AreEqual(42, s.Value);
+            Assert.Equal(42, s.Value);
+
+            var x = default(int);
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(42, x);
 
             s.OnNext(43);
-            Assert.AreEqual(43, s.Value);
+            Assert.Equal(43, s.Value);
+
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(43, x);
 
             s.OnNext(44);
-            Assert.AreEqual(44, s.Value);
+            Assert.Equal(44, s.Value);
+
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(44, x);
 
             s.OnCompleted();
-            Assert.AreEqual(44, s.Value);
+            Assert.Equal(44, s.Value);
+
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(44, x);
 
             s.OnNext(1234);
-            Assert.AreEqual(44, s.Value);
+            Assert.Equal(44, s.Value);
+
+            Assert.True(s.TryGetValue(out x));
+            Assert.Equal(44, x);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Fact]
         public void Value_ThrowsAfterOnError()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.AreEqual(42, s.Value);
+            Assert.Equal(42, s.Value);
 
             s.OnError(new InvalidOperationException());
-            
-            Assert.Fail("Should not be able to read Value: {0}", s.Value);
+
+            ReactiveAssert.Throws<InvalidOperationException>(() =>
+            {
+                var ignored = s.Value;
+            });
+
+            ReactiveAssert.Throws<InvalidOperationException>(() =>
+            {
+                var x = default(int);
+                s.TryGetValue(out x);
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(ObjectDisposedException))]
+        [Fact]
         public void Value_ThrowsOnDispose()
         {
             var s = new BehaviorSubject<int>(42);
-            Assert.AreEqual(42, s.Value);
+            Assert.Equal(42, s.Value);
 
             s.Dispose();
 
-            Assert.Fail("Should not be able to read Value: {0}", s.Value);
+            ReactiveAssert.Throws<ObjectDisposedException>(() =>
+            {
+                var ignored = s.Value;
+            });
+
+            var x = default(int);
+            Assert.False(s.TryGetValue(out x));
         }
     }
 }

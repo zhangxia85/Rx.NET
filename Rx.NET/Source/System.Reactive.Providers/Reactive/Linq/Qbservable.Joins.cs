@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #pragma warning disable 1591
 
@@ -26,9 +28,9 @@ namespace System.Reactive.Linq
         public static QueryablePattern<TLeft, TRight> And<TLeft, TRight>(this IQbservable<TLeft> left, IObservable<TRight> right)
         {
             if (left == null)
-                throw new ArgumentNullException("left");
+                throw new ArgumentNullException(nameof(left));
             if (right == null)
-                throw new ArgumentNullException("right");
+                throw new ArgumentNullException(nameof(right));
 
             return new QueryablePattern<TLeft, TRight>(
                 Expression.Call(
@@ -56,9 +58,9 @@ namespace System.Reactive.Linq
         public static QueryablePlan<TResult> Then<TSource, TResult>(this IQbservable<TSource> source, Expression<Func<TSource, TResult>> selector)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (selector == null)
-                throw new ArgumentNullException("selector");
+                throw new ArgumentNullException(nameof(selector));
 
             return new QueryablePlan<TResult>(
                 Expression.Call(
@@ -85,9 +87,9 @@ namespace System.Reactive.Linq
         public static IQbservable<TResult> When<TResult>(this IQbservableProvider provider, params QueryablePlan<TResult>[] plans)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (plans == null)
-                throw new ArgumentNullException("plans");
+                throw new ArgumentNullException(nameof(plans));
 
             return provider.CreateQuery<TResult>(
                 Expression.Call(
@@ -117,9 +119,9 @@ namespace System.Reactive.Linq
         public static IQbservable<TResult> When<TResult>(this IQbservableProvider provider, IEnumerable<QueryablePlan<TResult>> plans)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (plans == null)
-                throw new ArgumentNullException("plans");
+                throw new ArgumentNullException(nameof(plans));
 
             return provider.CreateQuery<TResult>(
                 Expression.Call(

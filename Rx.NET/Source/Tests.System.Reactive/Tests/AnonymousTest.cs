@@ -1,22 +1,24 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Microsoft.Reactive.Testing;
 using System.Reactive;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public class AnonymousTest
     {
-        [TestMethod]
+        [Fact]
         public void AnonymousObservable_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new AnonymousObservable<int>(null));
         }
 
-        [TestMethod]
+        [Fact]
         public void AnonymousObserver_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new AnonymousObserver<int>(default(Action<int>)));
@@ -32,7 +34,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => new AnonymousObserver<int>(x => { }, ex => { }, default(Action)));
         }
 
-        [TestMethod]
+        [Fact]
         public void AnonymousObserver_Error_Null()
         {
             var observer = new AnonymousObserver<int>(_ => { }, e => { }, () => { });

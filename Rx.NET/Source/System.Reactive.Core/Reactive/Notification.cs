@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Diagnostics;
 using System.Globalization;
@@ -158,7 +160,7 @@ namespace System.Reactive
             public override void Accept(IObserver<T> observer)
             {
                 if (observer == null)
-                    throw new ArgumentNullException("observer");
+                    throw new ArgumentNullException(nameof(observer));
 
                 observer.OnNext(Value);
             }
@@ -171,7 +173,7 @@ namespace System.Reactive
             public override TResult Accept<TResult>(IObserver<T, TResult> observer)
             {
                 if (observer == null)
-                    throw new ArgumentNullException("observer");
+                    throw new ArgumentNullException(nameof(observer));
 
                 return observer.OnNext(Value);
             }
@@ -185,11 +187,11 @@ namespace System.Reactive
             public override void Accept(Action<T> onNext, Action<Exception> onError, Action onCompleted)
             {
                 if (onNext == null)
-                    throw new ArgumentNullException("onNext");
+                    throw new ArgumentNullException(nameof(onNext));
                 if (onError == null)
-                    throw new ArgumentNullException("onError");
+                    throw new ArgumentNullException(nameof(onError));
                 if (onCompleted == null)
-                    throw new ArgumentNullException("onCompleted");
+                    throw new ArgumentNullException(nameof(onCompleted));
 
                 onNext(Value);
             }
@@ -204,11 +206,11 @@ namespace System.Reactive
             public override TResult Accept<TResult>(Func<T, TResult> onNext, Func<Exception, TResult> onError, Func<TResult> onCompleted)
             {
                 if (onNext == null)
-                    throw new ArgumentNullException("onNext");
+                    throw new ArgumentNullException(nameof(onNext));
                 if (onError == null)
-                    throw new ArgumentNullException("onError");
+                    throw new ArgumentNullException(nameof(onError));
                 if (onCompleted == null)
-                    throw new ArgumentNullException("onCompleted");
+                    throw new ArgumentNullException(nameof(onCompleted));
 
                 return onNext(Value);
             }
@@ -292,7 +294,7 @@ namespace System.Reactive
             public override void Accept(IObserver<T> observer)
             {
                 if (observer == null)
-                    throw new ArgumentNullException("observer");
+                    throw new ArgumentNullException(nameof(observer));
 
                 observer.OnError(Exception);
             }
@@ -305,7 +307,7 @@ namespace System.Reactive
             public override TResult Accept<TResult>(IObserver<T, TResult> observer)
             {
                 if (observer == null)
-                    throw new ArgumentNullException("observer");
+                    throw new ArgumentNullException(nameof(observer));
 
                 return observer.OnError(Exception);
             }
@@ -319,11 +321,11 @@ namespace System.Reactive
             public override void Accept(Action<T> onNext, Action<Exception> onError, Action onCompleted)
             {
                 if (onNext == null)
-                    throw new ArgumentNullException("onNext");
+                    throw new ArgumentNullException(nameof(onNext));
                 if (onError == null)
-                    throw new ArgumentNullException("onError");
+                    throw new ArgumentNullException(nameof(onError));
                 if (onCompleted == null)
-                    throw new ArgumentNullException("onCompleted");
+                    throw new ArgumentNullException(nameof(onCompleted));
 
                 onError(Exception);
             }
@@ -338,11 +340,11 @@ namespace System.Reactive
             public override TResult Accept<TResult>(Func<T, TResult> onNext, Func<Exception, TResult> onError, Func<TResult> onCompleted)
             {
                 if (onNext == null)
-                    throw new ArgumentNullException("onNext");
+                    throw new ArgumentNullException(nameof(onNext));
                 if (onError == null)
-                    throw new ArgumentNullException("onError");
+                    throw new ArgumentNullException(nameof(onError));
                 if (onCompleted == null)
-                    throw new ArgumentNullException("onCompleted");
+                    throw new ArgumentNullException(nameof(onCompleted));
 
                 return onError(Exception);
             }
@@ -421,7 +423,7 @@ namespace System.Reactive
             public override void Accept(IObserver<T> observer)
             {
                 if (observer == null)
-                    throw new ArgumentNullException("observer");
+                    throw new ArgumentNullException(nameof(observer));
 
                 observer.OnCompleted();
             }
@@ -434,7 +436,7 @@ namespace System.Reactive
             public override TResult Accept<TResult>(IObserver<T, TResult> observer)
             {
                 if (observer == null)
-                    throw new ArgumentNullException("observer");
+                    throw new ArgumentNullException(nameof(observer));
 
                 return observer.OnCompleted();
             }
@@ -448,11 +450,11 @@ namespace System.Reactive
             public override void Accept(Action<T> onNext, Action<Exception> onError, Action onCompleted)
             {
                 if (onNext == null)
-                    throw new ArgumentNullException("onNext");
+                    throw new ArgumentNullException(nameof(onNext));
                 if (onError == null)
-                    throw new ArgumentNullException("onError");
+                    throw new ArgumentNullException(nameof(onError));
                 if (onCompleted == null)
-                    throw new ArgumentNullException("onCompleted");
+                    throw new ArgumentNullException(nameof(onCompleted));
 
                 onCompleted();
             }
@@ -467,11 +469,11 @@ namespace System.Reactive
             public override TResult Accept<TResult>(Func<T, TResult> onNext, Func<Exception, TResult> onError, Func<TResult> onCompleted)
             {
                 if (onNext == null)
-                    throw new ArgumentNullException("onNext");
+                    throw new ArgumentNullException(nameof(onNext));
                 if (onError == null)
-                    throw new ArgumentNullException("onError");
+                    throw new ArgumentNullException(nameof(onError));
                 if (onCompleted == null)
-                    throw new ArgumentNullException("onCompleted");
+                    throw new ArgumentNullException(nameof(onCompleted));
 
                 return onCompleted();
             }
@@ -591,7 +593,7 @@ namespace System.Reactive
         public IObservable<T> ToObservable(IScheduler scheduler)
         {
             if (scheduler == null)
-                throw new ArgumentNullException("scheduler");
+                throw new ArgumentNullException(nameof(scheduler));
 
             return new AnonymousObservable<T>(observer => scheduler.Schedule(() =>
             {
@@ -628,7 +630,7 @@ namespace System.Reactive
         public static Notification<T> CreateOnError<T>(Exception error)
         {
             if (error == null)
-                throw new ArgumentNullException("error");
+                throw new ArgumentNullException(nameof(error));
 
             return new Notification<T>.OnErrorNotification(error);
         }

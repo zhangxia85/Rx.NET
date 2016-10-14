@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Reactive.Concurrency;
 using System.Windows.Forms;
@@ -25,9 +27,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> SubscribeOn<TSource>(this IObservable<TSource> source, Control control)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
             return Synchronization.SubscribeOn(source, new ControlScheduler(control));
         }
@@ -43,9 +45,9 @@ namespace System.Reactive.Linq
         public static IObservable<TSource> ObserveOn<TSource>(this IObservable<TSource> source, Control control)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
             return Synchronization.ObserveOn(source, new ControlScheduler(control));
         }

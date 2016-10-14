@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 #if STRESS
 using System;
@@ -9,7 +11,7 @@ using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace ReactiveTests.Stress.Schedulers
 {
@@ -26,7 +28,7 @@ namespace ReactiveTests.Stress.Schedulers
 
             using (var scheduler = new EventLoopScheduler())
             {
-                Assert.AreEqual(0, scheduler.CurrentCount());
+                Assert.Equal(0, scheduler.CurrentCount());
 
                 var maxCount = Environment.ProcessorCount;
 

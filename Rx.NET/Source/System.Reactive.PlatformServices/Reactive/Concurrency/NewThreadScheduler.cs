@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Reactive.Disposables;
 using System.Threading;
@@ -10,7 +12,7 @@ namespace System.Reactive.Concurrency
     /// </summary>
     public sealed class NewThreadScheduler : LocalScheduler, ISchedulerLongRunning, ISchedulerPeriodic
     {
-        internal static readonly NewThreadScheduler s_instance = new NewThreadScheduler();
+        internal static readonly Lazy<NewThreadScheduler> s_instance = new Lazy<NewThreadScheduler>(() => new NewThreadScheduler());
 
         private readonly Func<ThreadStart, Thread> _threadFactory;
 
@@ -29,7 +31,7 @@ namespace System.Reactive.Concurrency
         {
             get
             {
-                return s_instance;
+                return s_instance.Value;
             }
         }
 
@@ -42,7 +44,7 @@ namespace System.Reactive.Concurrency
         public NewThreadScheduler(Func<ThreadStart, Thread> threadFactory)
         {
             if (threadFactory == null)
-                throw new ArgumentNullException("threadFactory");
+                throw new ArgumentNullException(nameof(threadFactory));
 #else
         private NewThreadScheduler(Func<ThreadStart, Thread> threadFactory)
         {
@@ -62,7 +64,7 @@ namespace System.Reactive.Concurrency
         public override IDisposable Schedule<TState>(TState state, TimeSpan dueTime, Func<IScheduler, TState, IDisposable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var scheduler = new EventLoopScheduler(_threadFactory);
             scheduler.ExitIfEmpty = true;
@@ -80,7 +82,7 @@ namespace System.Reactive.Concurrency
         public IDisposable ScheduleLongRunning<TState>(TState state, Action<TState, ICancelable> action)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var d = new BooleanDisposable();
 
@@ -112,9 +114,9 @@ namespace System.Reactive.Concurrency
         public IDisposable SchedulePeriodic<TState>(TState state, TimeSpan period, Func<TState, TState> action)
         {
             if (period < TimeSpan.Zero)
-                throw new ArgumentOutOfRangeException("period");
+                throw new ArgumentOutOfRangeException(nameof(period));
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             var periodic = new Periodic<TState>(state, period, action);
 

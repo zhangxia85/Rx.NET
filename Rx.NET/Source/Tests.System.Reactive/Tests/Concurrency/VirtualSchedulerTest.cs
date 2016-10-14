@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System;
 using System.Collections.Generic;
@@ -6,12 +8,13 @@ using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public class VirtualSchedulerTest
     {
         class VirtualSchedulerTestScheduler : VirtualTimeScheduler<string, char>
@@ -41,25 +44,26 @@ namespace ReactiveTests.Tests
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Virtual_Now()
         {
             var res = new VirtualSchedulerTestScheduler().Now - DateTime.Now;
-            Assert.IsTrue(res.Seconds < 1);
+            Assert.True(res.Seconds < 1);
         }
-
-        [TestMethod]
+#if !NO_THREAD
+        [Fact]
         public void Virtual_ScheduleAction()
         {
             var id = Thread.CurrentThread.ManagedThreadId;
             var ran = false;
             var scheduler = new VirtualSchedulerTestScheduler();
-            scheduler.Schedule(() => { Assert.AreEqual(id, Thread.CurrentThread.ManagedThreadId); ran = true; });
+            scheduler.Schedule(() => { Assert.Equal(id, Thread.CurrentThread.ManagedThreadId); ran = true; });
             scheduler.Start();
-            Assert.IsTrue(ran);
+            Assert.True(ran);
         }
+#endif
 
-        [TestMethod]
+        [Fact]
         public void Virtual_ScheduleActionError()
         {
             var ex = new Exception();
@@ -69,22 +73,22 @@ namespace ReactiveTests.Tests
                 var scheduler = new VirtualSchedulerTestScheduler();
                 scheduler.Schedule(() => { throw ex; });
                 scheduler.Start();
-                Assert.Fail();
+                Assert.True(false);
             }
             catch (Exception e)
             {
-                Assert.AreSame(e, ex);
+                Assert.Same(e, ex);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Virtual_InitialAndComparer_Now()
         {
             var s = new VirtualSchedulerTestScheduler("Bar", Comparer<string>.Default);
-            Assert.AreEqual(3, s.Now.Ticks);
+            Assert.Equal(3, s.Now.Ticks);
         }
 
-        [TestMethod]
+        [Fact]
         public void Virtual_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new VirtualSchedulerTestScheduler("", null));
@@ -100,7 +104,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => VirtualTimeSchedulerExtensions.ScheduleRelative(new VirtualSchedulerTestScheduler(), 'a', default(Action)));
         }
 
-        [TestMethod]
+        [Fact]
         public void Historical_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new HistoricalScheduler(DateTime.Now, default(IComparer<DateTimeOffset>)));
@@ -108,9 +112,8 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => new HistoricalScheduler().ScheduleRelative(42, TimeSpan.FromSeconds(1), default(Func<IScheduler, int, IDisposable>)));
         }
 
-#if !SILVERLIGHT
-        [TestMethod]
-        [Ignore]
+#if !SILVERLIGHT && !NO_THREAD
+        [Fact(Skip = "Ignored")]
         public void Virtual_ScheduleActionDue()
         {
             var id = Thread.CurrentThread.ManagedThreadId;
@@ -118,15 +121,15 @@ namespace ReactiveTests.Tests
             var sw = new Stopwatch();
             sw.Start();
             var scheduler = new VirtualSchedulerTestScheduler();
-            scheduler.Schedule(TimeSpan.FromSeconds(0.2), () => { sw.Stop(); Assert.AreEqual(id, Thread.CurrentThread.ManagedThreadId); ran = true; });
+            scheduler.Schedule(TimeSpan.FromSeconds(0.2), () => { sw.Stop(); Assert.Equal(id, Thread.CurrentThread.ManagedThreadId); ran = true; });
             scheduler.Start();
-            Assert.IsTrue(ran, "ran");
-            Assert.IsTrue(sw.ElapsedMilliseconds > 180, "due " + sw.ElapsedMilliseconds);
+            Assert.True(ran, "ran");
+            Assert.True(sw.ElapsedMilliseconds > 180, "due " + sw.ElapsedMilliseconds);
         }
 #endif
 
-#if DESKTOPCLR
-        [TestMethod]
+        [Fact]
+        [Trait("SkipCI", "true")]
         public void Virtual_ThreadSafety()
         {
             for (var i = 0; i < 10; i++)
@@ -134,9 +137,9 @@ namespace ReactiveTests.Tests
                 var scheduler = new TestScheduler();
                 var seq = Observable.Never<string>();
 
-                ThreadPool.QueueUserWorkItem(_ =>
+                Task.Run(()=>
                 {
-                    Thread.Sleep(50);
+                    Task.Delay(50).Wait();
                     seq.Timeout(TimeSpan.FromSeconds(10), scheduler).Subscribe(s => { });
                 });
 
@@ -153,10 +156,9 @@ namespace ReactiveTests.Tests
                 }
                 catch (Exception ex)
                 {
-                    Assert.Fail("Virtual time {0}, exception {1}", watch.Elapsed, ex);
+                    Assert.True(false, string.Format("Virtual time {0}, exception {1}", watch.Elapsed, ex));
                 }
             }
         }
-#endif
     }
 }

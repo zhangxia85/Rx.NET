@@ -1,7 +1,10 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Threading;
 
 namespace System.Reactive.Subjects
@@ -11,14 +14,14 @@ namespace System.Reactive.Subjects
     /// Each notification is broadcasted to all subscribed and future observers, subject to buffer trimming policies.
     /// </summary>
     /// <typeparam name="T">The type of the elements processed by the subject.</typeparam>
-    public sealed class ReplaySubject<T> : ISubject<T>, IDisposable
+    public sealed class ReplaySubject<T> : SubjectBase<T>, IDisposable
     {
         #region Fields
 
         /// <summary>
         /// Underlying optimized implementation of the replay subject.
         /// </summary>
-        private readonly IReplaySubjectImplementation _implementation;
+        private readonly SubjectBase<T> _implementation;
 
         #endregion
 
@@ -144,22 +147,30 @@ namespace System.Reactive.Subjects
         /// <summary>
         /// Indicates whether the subject has observers subscribed to it.
         /// </summary>
-        public bool HasObservers
+        public override bool HasObservers
         {
             get { return _implementation.HasObservers; }
+        }
+
+        /// <summary>
+        /// Indicates whether the subject has been disposed.
+        /// </summary>
+        public override bool IsDisposed
+        {
+            get { return _implementation.IsDisposed; }
         }
 
         #endregion
 
         #region Methods
 
-        #region Observer implementation
+        #region IObserver<T> implementation
 
         /// <summary>
         /// Notifies all subscribed and future observers about the arrival of the specified element in the sequence.
         /// </summary>
         /// <param name="value">The value to send to all observers.</param>
-        public void OnNext(T value)
+        public override void OnNext(T value)
         {
             _implementation.OnNext(value);
         }
@@ -169,22 +180,25 @@ namespace System.Reactive.Subjects
         /// </summary>
         /// <param name="error">The exception to send to all observers.</param>
         /// <exception cref="ArgumentNullException"><paramref name="error"/> is null.</exception>
-        public void OnError(Exception error)
+        public override void OnError(Exception error)
         {
+            if (error == null)
+                throw new ArgumentNullException(nameof(error));
+
             _implementation.OnError(error);
         }
 
         /// <summary>
         /// Notifies all subscribed and future observers about the end of the sequence.
         /// </summary>
-        public void OnCompleted()
+        public override void OnCompleted()
         {
             _implementation.OnCompleted();
         }
 
         #endregion
 
-        #region IObservable implementation
+        #region IObservable<T> implementation
 
         /// <summary>
         /// Subscribes an observer to the subject.
@@ -192,8 +206,11 @@ namespace System.Reactive.Subjects
         /// <param name="observer">Observer to subscribe to the subject.</param>
         /// <returns>Disposable object that can be used to unsubscribe the observer from the subject.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="observer"/> is null.</exception>
-        public IDisposable Subscribe(IObserver<T> observer)
+        public override IDisposable Subscribe(IObserver<T> observer)
         {
+            if (observer == null)
+                throw new ArgumentNullException(nameof(observer));
+
             return _implementation.Subscribe(observer);
         }
 
@@ -204,7 +221,7 @@ namespace System.Reactive.Subjects
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="System.Reactive.Subjects.ReplaySubject&lt;T&gt;"/> class and unsubscribe all observers.
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             _implementation.Dispose();
         }
@@ -213,12 +230,7 @@ namespace System.Reactive.Subjects
 
         #endregion
 
-        private interface IReplaySubjectImplementation : ISubject<T>, IDisposable
-        {
-            bool HasObservers { get; }
-        }
-
-        private abstract class ReplayBase : IReplaySubjectImplementation
+        private abstract class ReplayBase : SubjectBase<T>
         {
             private readonly object _gate = new object();
 
@@ -236,7 +248,7 @@ namespace System.Reactive.Subjects
                 _error = null;
             }
 
-            public bool HasObservers
+            public override bool HasObservers
             {
                 get
                 {
@@ -245,7 +257,18 @@ namespace System.Reactive.Subjects
                 }
             }
 
-            public void OnNext(T value)
+            public override bool IsDisposed
+            {
+                get
+                {
+                    lock (_gate)
+                    {
+                        return _isDisposed;
+                    }
+                }
+            }
+
+            public override void OnNext(T value)
             {
                 var o = default(IScheduledObserver<T>[]);
                 lock (_gate)
@@ -270,11 +293,8 @@ namespace System.Reactive.Subjects
                 }
             }
 
-            public void OnError(Exception error)
+            public override void OnError(Exception error)
             {
-                if (error == null)
-                    throw new ArgumentNullException("error");
-
                 var o = default(IScheduledObserver<T>[]);
                 lock (_gate)
                 {
@@ -301,7 +321,7 @@ namespace System.Reactive.Subjects
                 }
             }
 
-            public void OnCompleted()
+            public override void OnCompleted()
             {
                 var o = default(IScheduledObserver<T>[]);
                 lock (_gate)
@@ -328,16 +348,14 @@ namespace System.Reactive.Subjects
                 }
             }
 
-            public IDisposable Subscribe(IObserver<T> observer)
+            public override IDisposable Subscribe(IObserver<T> observer)
             {
-                if (observer == null)
-                    throw new ArgumentNullException("observer");
-
                 var so = CreateScheduledObserver(observer);
 
                 var n = 0;
 
-                var subscription = new Subscription(this, so);
+                var subscription = Disposable.Empty;
+
                 lock (_gate)
                 {
                     CheckDisposed();
@@ -362,7 +380,6 @@ namespace System.Reactive.Subjects
                     // reasons with v1.x.
                     //
                     Trim();
-                    _observers = _observers.Add(so);
 
                     n = Replay(so);
 
@@ -376,6 +393,12 @@ namespace System.Reactive.Subjects
                         n++;
                         so.OnCompleted();
                     }
+
+                    if (!_isStopped)
+                    {
+                        subscription = new Subscription(this, so);
+                        _observers = _observers.Add(so);
+                    }
                 }
 
                 so.EnsureActive(n);
@@ -383,7 +406,7 @@ namespace System.Reactive.Subjects
                 return subscription;
             }
 
-            public void Dispose()
+            public override void Dispose()
             {
                 lock (_gate)
                 {
@@ -419,6 +442,46 @@ namespace System.Reactive.Subjects
                     }
                 }
             }
+
+#if NOTYET // TODO: Expose internal notifications similar to BehaviorSubject<T>.TryGetValue?
+
+            public bool TryGetNotifications(out IList<Notification<T>> notifications)
+            {
+                lock (_gate)
+                {
+                    if (_isDisposed)
+                    {
+                        notifications = null;
+                        return false;
+                    }
+                    else
+                    {
+                        var res = new List<Notification<T>>();
+
+                        var materializer = Observer.Create<T>(
+                            x => res.Add(Notification.CreateOnNext(x)),
+                            ex => res.Add(Notification.CreateOnError<T>(ex)),
+                            () => res.Add(Notification.CreateOnCompleted<T>())
+                        );
+
+                        Replay(materializer);
+
+                        if (_error != null)
+                        {
+                            materializer.OnError(_error);
+                        }
+                        else if (_isStopped)
+                        {
+                            materializer.OnCompleted();
+                        }
+
+                        notifications = res;
+                        return true;
+                    }
+                }
+            }
+
+#endif
 
             private sealed class Subscription : IDisposable
             {
@@ -456,11 +519,11 @@ namespace System.Reactive.Subjects
             public ReplayByTime(int bufferSize, TimeSpan window, IScheduler scheduler)
             {
                 if (bufferSize < 0)
-                    throw new ArgumentOutOfRangeException("bufferSize");
+                    throw new ArgumentOutOfRangeException(nameof(bufferSize));
                 if (window < TimeSpan.Zero)
-                    throw new ArgumentOutOfRangeException("window");
+                    throw new ArgumentOutOfRangeException(nameof(window));
                 if (scheduler == null)
-                    throw new ArgumentNullException("scheduler");
+                    throw new ArgumentNullException(nameof(scheduler));
 
                 _bufferSize = bufferSize;
                 _window = window;
@@ -539,7 +602,7 @@ namespace System.Reactive.Subjects
         // The ReplayOne implementation also removes the need to even have a queue.
         //
 
-        private sealed class ReplayOne : ReplayBufferBase, IReplaySubjectImplementation
+        private sealed class ReplayOne : ReplayBufferBase
         {
             private bool _hasValue;
             private T _value;
@@ -576,7 +639,7 @@ namespace System.Reactive.Subjects
             }
         }
 
-        private sealed class ReplayMany : ReplayManyBase, IReplaySubjectImplementation
+        private sealed class ReplayMany : ReplayManyBase
         {
             private readonly int _bufferSize;
 
@@ -593,7 +656,7 @@ namespace System.Reactive.Subjects
             }
         }
 
-        private sealed class ReplayAll : ReplayManyBase, IReplaySubjectImplementation
+        private sealed class ReplayAll : ReplayManyBase
         {
             public ReplayAll()
                 : base(0)
@@ -620,7 +683,7 @@ namespace System.Reactive.Subjects
             }
         }
 
-        private abstract class ReplayManyBase : ReplayBufferBase, IReplaySubjectImplementation
+        private abstract class ReplayManyBase : ReplayBufferBase
         {
             protected readonly Queue<T> _queue;
 
@@ -919,7 +982,9 @@ namespace System.Reactive.Subjects
         /// <returns>Observer to send terminal notifications to.</returns>
         private IObserver<T> Done()
         {
+#pragma warning disable 0420
             return Interlocked.Exchange(ref _observer, NopObserver<T>.Instance);
+#pragma warning restore 0420
         }
     }
 }

@@ -17,9 +17,9 @@ using System.Security;
 #else
 [assembly: AssemblyConfiguration("Retail")]
 #endif
-[assembly: AssemblyCompany("Microsoft Open Technologies, Inc.")]
+[assembly: AssemblyCompany(".NET Foundation and Contributors.")]
 [assembly: AssemblyProduct("Reactive Extensions")]
-[assembly: AssemblyCopyright("\x00a9 Microsoft Open Technologies, Inc.  All rights reserved.")]
+[assembly: AssemblyCopyright("\x00a9 .NET Foundation and Contributors.  All rights reserved.")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
 #if !PLIB
@@ -39,6 +39,5 @@ using System.Security;
 //  Version numbers are automatically generated in the msbuild files based on regular expressions 
 // ===========================================================================
 
-[assembly: AssemblyVersion("2.2.0.0")]
 [assembly: AssemblyFileVersion("2.2.0.0")]
 [assembly: AssemblyInformationalVersion("2.2.0.0")]

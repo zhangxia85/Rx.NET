@@ -1,5 +1,8 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
+#if NET45
 using System;
 using System.Diagnostics;
 using System.Reactive.Concurrency;
@@ -7,7 +10,7 @@ using System.Reactive.Disposables;
 using System.Threading;
 using System.Windows.Threading;
 using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 #if SILVERLIGHT && !SILVERLIGHTM7
 using Microsoft.Silverlight.Testing;
@@ -15,16 +18,16 @@ using Microsoft.Silverlight.Testing;
 
 namespace ReactiveTests.Tests
 {
-    [TestClass]
+    
     public class DispatcherSchedulerTest : TestBase
     {
-        [TestMethod]
+        [Fact]
         public void Ctor_ArgumentChecking()
         {
             ReactiveAssert.Throws<ArgumentNullException>(() => new DispatcherScheduler(null));
         }
 
-        [TestMethod]
+        [Fact]
         public void Current()
         {
             var d = DispatcherHelpers.EnsureDispatcher();
@@ -39,7 +42,7 @@ namespace ReactiveTests.Tests
             e.WaitOne();
         }
 
-        [TestMethod]
+        [Fact]
         public void Current_None()
         {
             var e = default(Exception);
@@ -59,25 +62,25 @@ namespace ReactiveTests.Tests
             t.Start();
             t.Join();
 
-            Assert.IsTrue(e != null && e is InvalidOperationException);
+            Assert.True(e != null && e is InvalidOperationException);
         }
 
-        [TestMethod]
+        [Fact]
         public void Dispatcher()
         {
             var disp = DispatcherHelpers.EnsureDispatcher();
-            Assert.AreSame(disp.Dispatcher, new DispatcherScheduler(disp).Dispatcher);
+            Assert.Same(disp.Dispatcher, new DispatcherScheduler(disp).Dispatcher);
         }
 
-        [TestMethod]
+        [Fact]
         public void Now()
         {
             var disp = DispatcherHelpers.EnsureDispatcher();
             var res = new DispatcherScheduler(disp).Now - DateTime.Now;
-            Assert.IsTrue(res.Seconds < 1);
+            Assert.True(res.Seconds < 1);
         }
 
-        [TestMethod]
+        [Fact]
         public void Schedule_ArgumentChecking()
         {
             var disp = DispatcherHelpers.EnsureDispatcher();
@@ -87,7 +90,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentNullException>(() => s.Schedule(42, DateTimeOffset.Now, default(Func<IScheduler, int, IDisposable>)));
         }
 
-        [TestMethod]
+        [Fact]
         [Asynchronous]
         public void Schedule()
         {
@@ -100,9 +103,9 @@ namespace ReactiveTests.Tests
                 sch.Schedule(() =>
                 {
 #if SILVERLIGHT
-                    Assert.AreEqual(id, Thread.CurrentThread.ManagedThreadId); // Single-threaded test framework
+                    Assert.Equal(id, Thread.CurrentThread.ManagedThreadId); // Single-threaded test framework
 #else
-                    Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                    Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
 #endif
                     disp.InvokeShutdown();
                     evt.Set();
@@ -111,7 +114,7 @@ namespace ReactiveTests.Tests
         }
 
 #if !USE_SL_DISPATCHER
-        [TestMethod]
+        [Fact]
         public void ScheduleError()
         {
             var ex = new Exception();
@@ -122,9 +125,9 @@ namespace ReactiveTests.Tests
             disp.UnhandledException += (o, e) =>
             {
 #if DESKTOPCLR40 || DESKTOPCLR45 || DESKTOPCLR46
-                Assert.AreSame(ex, e.Exception); // CHECK
+                Assert.Same(ex, e.Exception); // CHECK
 #else
-                Assert.AreSame(ex, e.Exception.InnerException); // CHECK
+                Assert.Same(ex, e.Exception.InnerException); // CHECK
 #endif
                 evt.Set();
                 e.Handled = true;
@@ -135,13 +138,13 @@ namespace ReactiveTests.Tests
             disp.InvokeShutdown();
         }
 
-        [TestMethod]
+        [Fact]
         public void ScheduleRelative()
         {
             ScheduleRelative_(TimeSpan.FromSeconds(0.2));
         }
 
-        [TestMethod]
+        [Fact]
         public void ScheduleRelative_Zero()
         {
             ScheduleRelative_(TimeSpan.Zero);
@@ -158,11 +161,11 @@ namespace ReactiveTests.Tests
 
             sch.Schedule(delay, () =>
             {
-                Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
 
                 sch.Schedule(delay, () =>
                 {
-                    Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                    Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                     evt.Set();
                 });
             });
@@ -171,7 +174,7 @@ namespace ReactiveTests.Tests
             disp.InvokeShutdown();
         }
 
-        [TestMethod]
+        [Fact]
         public void ScheduleRelative_Cancel()
         {
             var evt = new ManualResetEvent(false);
@@ -183,11 +186,11 @@ namespace ReactiveTests.Tests
             
             sch.Schedule(TimeSpan.FromSeconds(0.1), () =>
             {
-                Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
 
                 var d = sch.Schedule(TimeSpan.FromSeconds(0.1), () =>
                 {
-                    Assert.Fail();
+                    Assert.True(false);
                     evt.Set();
                 });
 
@@ -198,7 +201,7 @@ namespace ReactiveTests.Tests
 
                 sch.Schedule(TimeSpan.FromSeconds(0.2), () =>
                 {
-                    Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                    Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                     evt.Set();
                 });
             });
@@ -207,7 +210,7 @@ namespace ReactiveTests.Tests
             disp.InvokeShutdown();
         }
 
-        [TestMethod]
+        [Fact]
         public void SchedulePeriodic_ArgumentChecking()
         {
             var disp = DispatcherHelpers.EnsureDispatcher();
@@ -217,7 +220,7 @@ namespace ReactiveTests.Tests
             ReactiveAssert.Throws<ArgumentOutOfRangeException>(() => s.SchedulePeriodic(42, TimeSpan.FromSeconds(-1), x => x));
         }
 
-        [TestMethod]
+        [Fact]
         public void SchedulePeriodic()
         {
             var evt = new ManualResetEvent(false);
@@ -231,7 +234,7 @@ namespace ReactiveTests.Tests
 
             d.Disposable = sch.SchedulePeriodic(1, TimeSpan.FromSeconds(0.1), n =>
             {
-                Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
 
                 if (n == 3)
                 {
@@ -239,14 +242,14 @@ namespace ReactiveTests.Tests
 
                     sch.Schedule(TimeSpan.FromSeconds(0.2), () =>
                     {
-                        Assert.AreNotEqual(id, Thread.CurrentThread.ManagedThreadId);
+                        Assert.NotEqual(id, Thread.CurrentThread.ManagedThreadId);
                         evt.Set();
                     });
                 }
 
                 if (n > 3)
                 {
-                    Assert.Fail();
+                    Assert.True(false);
                 }
 
                 return n + 1;
@@ -258,3 +261,4 @@ namespace ReactiveTests.Tests
 #endif
     }
 }
+#endif

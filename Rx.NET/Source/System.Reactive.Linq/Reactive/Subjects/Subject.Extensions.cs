@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
 
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -22,9 +24,9 @@ namespace System.Reactive.Subjects
         public static ISubject<TSource, TResult> Create<TSource, TResult>(IObserver<TSource> observer, IObservable<TResult> observable)
         {
             if (observer == null)
-                throw new ArgumentNullException("observer");
+                throw new ArgumentNullException(nameof(observer));
             if (observable == null)
-                throw new ArgumentNullException("observable");
+                throw new ArgumentNullException(nameof(observable));
 
             return new AnonymousSubject<TSource, TResult>(observer, observable);
         }
@@ -40,9 +42,9 @@ namespace System.Reactive.Subjects
         public static ISubject<T> Create<T>(IObserver<T> observer, IObservable<T> observable)
         {
             if (observer == null)
-                throw new ArgumentNullException("observer");
+                throw new ArgumentNullException(nameof(observer));
             if (observable == null)
-                throw new ArgumentNullException("observable");
+                throw new ArgumentNullException(nameof(observable));
 
             return new AnonymousSubject<T>(observer, observable);
         }
@@ -58,7 +60,7 @@ namespace System.Reactive.Subjects
         public static ISubject<TSource, TResult> Synchronize<TSource, TResult>(ISubject<TSource, TResult> subject)
         {
             if (subject == null)
-                throw new ArgumentNullException("subject");
+                throw new ArgumentNullException(nameof(subject));
 
             return new AnonymousSubject<TSource, TResult>(Observer.Synchronize(subject), subject);
         }
@@ -73,7 +75,7 @@ namespace System.Reactive.Subjects
         public static ISubject<TSource> Synchronize<TSource>(ISubject<TSource> subject)
         {
             if (subject == null)
-                throw new ArgumentNullException("subject");
+                throw new ArgumentNullException(nameof(subject));
 
             return new AnonymousSubject<TSource>(Observer.Synchronize(subject), subject);
         }
@@ -90,9 +92,9 @@ namespace System.Reactive.Subjects
         public static ISubject<TSource, TResult> Synchronize<TSource, TResult>(ISubject<TSource, TResult> subject, IScheduler scheduler)
         {
             if (subject == null)
-                throw new ArgumentNullException("subject");
+                throw new ArgumentNullException(nameof(subject));
             if (scheduler == null)
-                throw new ArgumentNullException("scheduler");
+                throw new ArgumentNullException(nameof(scheduler));
 
             return new AnonymousSubject<TSource, TResult>(Observer.Synchronize(subject), subject.ObserveOn(scheduler));
         }
@@ -108,9 +110,9 @@ namespace System.Reactive.Subjects
         public static ISubject<TSource> Synchronize<TSource>(ISubject<TSource> subject, IScheduler scheduler)
         {
             if (subject == null)
-                throw new ArgumentNullException("subject");
+                throw new ArgumentNullException(nameof(subject));
             if (scheduler == null)
-                throw new ArgumentNullException("scheduler");
+                throw new ArgumentNullException(nameof(scheduler));
 
             return new AnonymousSubject<TSource>(Observer.Synchronize(subject), subject.ObserveOn(scheduler));
         }
@@ -134,7 +136,7 @@ namespace System.Reactive.Subjects
             public void OnError(Exception error)
             {
                 if (error == null)
-                    throw new ArgumentNullException("error");
+                    throw new ArgumentNullException(nameof(error));
 
                 _observer.OnError(error);
             }
@@ -147,7 +149,7 @@ namespace System.Reactive.Subjects
             public IDisposable Subscribe(IObserver<U> observer)
             {
                 if (observer == null)
-                    throw new ArgumentNullException("observer");
+                    throw new ArgumentNullException(nameof(observer));
 
                 //
                 // [OK] Use of unsafe Subscribe: non-pretentious wrapping of an observable sequence.
